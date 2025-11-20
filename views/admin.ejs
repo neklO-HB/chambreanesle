@@ -10,10 +10,11 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="admin-body">
-  <div class="blur-layer blur-one"></div>
-  <div class="blur-layer blur-two"></div>
   <header class="admin-topbar">
-    <div class="logo">Chambre<span>À</span>Nesle</div>
+    <div class="logo">
+      <img src="/images/logo.svg" alt="Chambre À Nesle" />
+      <span>Chambre À Nesle</span>
+    </div>
     <div class="admin-actions">
       <span class="welcome">Bonjour, <%= user.username %></span>
       <form method="POST" action="/admin/logout">
