@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration — Chambre À Nesle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="admin-body">
+  <div class="blur-layer blur-one"></div>
+  <div class="blur-layer blur-two"></div>
+  <header class="admin-topbar">
+    <div class="logo">Chambre<span>À</span>Nesle</div>
+    <div class="admin-actions">
+      <span class="welcome">Bonjour, <%= user.username %></span>
+      <form method="POST" action="/admin/logout">
+        <button class="btn ghost" type="submit">Déconnexion</button>
+      </form>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="admin-hero">
+      <div>
+        <p class="eyebrow">Panneau</p>
+        <h1>Réservations en cours</h1>
+        <p class="subtitle">Mettez à jour les statuts et gardez un œil sur les demandes.</p>
+      </div>
+      <div class="pill">Base SQLite • Sécurisé</div>
+    </div>
+
+    <% if (flash) { %>
+      <div class="flash <%= flash.type %>"><%= flash.message %></div>
+    <% } %>
+
+    <div class="reservations">
+      <% if (!reservations.length) { %>
+        <p class="empty">Aucune demande pour le moment.</p>
+      <% } %>
+
+      <% reservations.forEach(res => { %>
+        <article class="reservation-card">
+          <div class="reservation-head">
+            <div>
+              <p class="eyebrow"><%= res.room %></p>
+              <h3><%= res.guestName %></h3>
+              <p class="subtitle"><%= res.checkIn %> → <%= res.checkOut %></p>
+            </div>
+            <form method="POST" action="/admin/reservations/<%= res.id %>/status" class="status-form">
+              <label for="status-<%= res.id %>">Statut</label>
+              <select id="status-<%= res.id %>" name="status" onchange="this.form.submit()">
+                <option value="Nouveau" <%= res.status === 'Nouveau' ? 'selected' : '' %>>Nouveau</option>
+                <option value="Confirmé" <%= res.status === 'Confirmé' ? 'selected' : '' %>>Confirmé</option>
+                <option value="Annulé" <%= res.status === 'Annulé' ? 'selected' : '' %>>Annulé</option>
+              </select>
+            </form>
+          </div>
+          <div class="reservation-body">
+            <div>
+              <span class="label">Contact</span>
+              <p><%= res.email %> · <%= res.phone %></p>
+            </div>
+            <div>
+              <span class="label">Notes</span>
+              <p><%= res.notes || '—' %></p>
+            </div>
+          </div>
+          <p class="micro created">Créé le <%= res.createdAt %></p>
+        </article>
+      <% }) %>
+    </div>
+  </main>
+</body>
+</html>

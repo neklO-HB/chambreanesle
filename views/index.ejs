@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chambre À Nesle — Séjours inspirés</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="blur-layer blur-one"></div>
+  <div class="blur-layer blur-two"></div>
+  <header class="topbar">
+    <div class="logo">Chambre<span>À</span>Nesle</div>
+    <nav>
+      <a href="#rooms">Chambres</a>
+      <a href="#reservation">Réserver</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <% if (flash) { %>
+    <div class="flash <%= flash.type %>"><%= flash.message %></div>
+  <% } %>
+
+  <main>
+    <section class="hero">
+      <div class="hero__grid">
+        <div class="hero__content">
+          <p class="eyebrow">1 Avenue Foch, 80190 Nesle</p>
+          <h1>Réservez un refuge design pour une nuit ou plus</h1>
+          <p class="subtitle">Trois atmosphères, une adresse confidentielle : des chambres pensées pour le confort, la lumière et le style.</p>
+          <div class="cta-row">
+            <a class="btn primary" href="#reservation">Réserver</a>
+            <span class="hint">Eva · Sohan · Eden</span>
+          </div>
+        </div>
+        <div class="hero__panel">
+          <div class="panel-card">
+            <p class="panel-title">Disponibilités rapides</p>
+            <ul>
+              <% rooms.forEach(room => { %>
+                <li>
+                  <div>
+                    <strong><%= room.name %></strong>
+                    <small><%= room.vibe %></small>
+                  </div>
+                  <span class="tag">Prête à vous accueillir</span>
+                </li>
+              <% }) %>
+            </ul>
+            <p class="micro">Des envies spécifiques ? Indiquez-les dans la note lors de votre demande.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rooms" id="rooms">
+      <div class="section-head">
+        <p class="eyebrow">Nos 3 signatures</p>
+        <h2>Eva, Sohan & Eden</h2>
+        <p class="subtitle">Des chambres habillées de bleu corail et de noir pour un contraste chic, sans texte superflu.</p>
+      </div>
+      <div class="room-grid">
+        <% rooms.forEach(room => { %>
+          <article class="room-card">
+            <div class="room-header">
+              <div>
+                <p class="eyebrow"><%= room.size %></p>
+                <h3><%= room.name %></h3>
+                <p class="vibe"><%= room.vibe %></p>
+              </div>
+              <div class="price-chip">Nuit dès 90€</div>
+            </div>
+            <ul class="features">
+              <% room.features.forEach(feature => { %>
+                <li><%= feature %></li>
+              <% }) %>
+            </ul>
+            <div class="room-footer">
+              <span class="tag">Wifi fibre</span>
+              <span class="tag">Literie premium</span>
+              <a class="text-link" href="#reservation">Demander</a>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+
+    <section class="reservation" id="reservation">
+      <div class="section-head compact">
+        <p class="eyebrow">Réservation</p>
+        <h2>Une demande en quelques secondes</h2>
+        <p class="subtitle">Nous confirmons la dispo par mail ou téléphone.</p>
+      </div>
+      <form class="reservation-form" method="POST" action="/reserve">
+        <div class="field">
+          <label for="guestName">Votre nom</label>
+          <input required type="text" id="guestName" name="guestName" placeholder="Nom & prénom" />
+        </div>
+        <div class="double">
+          <div class="field">
+            <label for="email">Email</label>
+            <input required type="email" id="email" name="email" placeholder="vous@example.com" />
+          </div>
+          <div class="field">
+            <label for="phone">Téléphone</label>
+            <input required type="tel" id="phone" name="phone" placeholder="06 00 00 00 00" />
+          </div>
+        </div>
+        <div class="double">
+          <div class="field">
+            <label for="room">Chambre</label>
+            <select id="room" name="room" required>
+              <% rooms.forEach(room => { %>
+                <option value="<%= room.name %>"><%= room.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="field inline-date">
+            <div>
+              <label for="checkIn">Arrivée</label>
+              <input required type="date" id="checkIn" name="checkIn" />
+            </div>
+            <div>
+              <label for="checkOut">Départ</label>
+              <input required type="date" id="checkOut" name="checkOut" />
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes" rows="3" placeholder="Heure d'arrivée, besoins spécifiques..."></textarea>
+        </div>
+        <button class="btn primary" type="submit">Envoyer ma demande</button>
+        <p class="micro">En soumettant, vous acceptez que nous vous recontactions à propos de votre séjour.</p>
+      </form>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="contact-card">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h3>On vous répond vite</h3>
+          <p class="subtitle">Téléphone, mail ou passage direct. L'essentiel reste votre confort.</p>
+          <div class="contact-grid">
+            <div>
+              <span class="label">Adresse</span>
+              <p><%= address %></p>
+            </div>
+            <div>
+              <span class="label">Téléphone</span>
+              <p>+33 6 00 00 00 00</p>
+            </div>
+            <div>
+              <span class="label">Email</span>
+              <p>hello@chambrea-nesle.fr</p>
+            </div>
+          </div>
+        </div>
+        <div class="badge">
+          <p>Admin :</p>
+          <strong>Webmaster</strong>
+          <span>Mot de passe : Didi0509@</span>
+          <a class="text-link" href="/admin/login">Accès panneau</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

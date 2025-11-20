@@ -1,0 +1,25 @@
+{
+  "name": "chambreanesle",
+  "version": "1.0.0",
+  "description": "Site de réservation Chambre À Nesle avec panel administrateur",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "reservation",
+    "hotel",
+    "nesle"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^2.2.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "sqlite3": "^5.1.7"
+  }
+}
