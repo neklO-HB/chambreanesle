@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion — Chambre À Nesle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="auth-body">
+  <div class="blur-layer blur-one"></div>
+  <div class="blur-layer blur-two"></div>
+  <main class="auth">
+    <div class="auth-card">
+      <div class="logo">Chambre<span>À</span>Nesle</div>
+      <h1>Connexion administrateur</h1>
+      <p class="subtitle">Utilisateur par défaut : <strong>Webmaster</strong> / Mot de passe : <strong>Didi0509@</strong></p>
+      <% if (flash) { %>
+        <div class="flash <%= flash.type %>"><%= flash.message %></div>
+      <% } %>
+      <form method="POST" action="/admin/login" class="auth-form">
+        <label for="username">Utilisateur</label>
+        <input required type="text" id="username" name="username" placeholder="Webmaster" />
+        <label for="password">Mot de passe</label>
+        <input required type="password" id="password" name="password" placeholder="••••••••" />
+        <button class="btn primary" type="submit">Se connecter</button>
+        <a class="text-link" href="/">Retour au site</a>
+      </form>
+    </div>
+  </main>
+</body>
+</html>
