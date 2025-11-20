@@ -1,0 +1,7 @@
+<svg width="180" height="40" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="1.5" y="1.5" width="37" height="37" rx="11" stroke="#009698" stroke-width="3" fill="rgba(0,150,152,0.08)" />
+  <path d="M11 22h18c1.4 0 2.5 1 2.5 2.4V30H8.5v-5.6C8.5 23 9.6 22 11 22Z" fill="#009698"/>
+  <path d="M11.5 14.5h17c1.1 0 2 0.9 2 2v4h-21v-4c0-1.1 0.9-2 2-2Z" fill="#00b1b3"/>
+  <path d="M13 19.5h3.5M22.5 19.5H26" stroke="#EFFFFF" stroke-width="2" stroke-linecap="round"/>
+  <text x="48" y="26" fill="#004f4f" font-family="'Manrope', 'Inter', system-ui" font-size="16" font-weight="800">Chambre À Nesle</text>
+</svg>

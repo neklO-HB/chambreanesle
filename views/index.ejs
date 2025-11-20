@@ -10,10 +10,11 @@
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-  <div class="blur-layer blur-one"></div>
-  <div class="blur-layer blur-two"></div>
   <header class="topbar">
-    <div class="logo">Chambre<span>À</span>Nesle</div>
+    <div class="logo">
+      <img src="/images/logo.svg" alt="Chambre À Nesle" />
+      <span>Chambre À Nesle</span>
+    </div>
     <nav>
       <a href="#rooms">Chambres</a>
       <a href="#reservation">Réserver</a>
@@ -30,11 +31,16 @@
       <div class="hero__grid">
         <div class="hero__content">
           <p class="eyebrow">1 Avenue Foch, 80190 Nesle</p>
-          <h1>Réservez un refuge design pour une nuit ou plus</h1>
-          <p class="subtitle">Trois atmosphères, une adresse confidentielle : des chambres pensées pour le confort, la lumière et le style.</p>
+          <h1>Un refuge apaisant, dessiné autour du vert d'eau #009698</h1>
+          <p class="subtitle">Une adresse intimiste où la lumière, les textures naturelles et un turquoise signature se conjuguent pour des séjours reposants.</p>
           <div class="cta-row">
             <a class="btn primary" href="#reservation">Réserver</a>
             <span class="hint">Eva · Sohan · Eden</span>
+          </div>
+          <div class="cta-row">
+            <span class="tag">Arrivée autonome</span>
+            <span class="tag">Wifi fibre</span>
+            <span class="tag">Literie premium</span>
           </div>
         </div>
         <div class="hero__panel">
@@ -61,7 +67,7 @@
       <div class="section-head">
         <p class="eyebrow">Nos 3 signatures</p>
         <h2>Eva, Sohan & Eden</h2>
-        <p class="subtitle">Des chambres habillées de bleu corail et de noir pour un contraste chic, sans texte superflu.</p>
+        <p class="subtitle">Des volumes lumineux habillés de bois clair, de lin et de notre couleur phare #009698 pour une ambiance fraîche.</p>
       </div>
       <div class="room-grid">
         <% rooms.forEach(room => { %>
@@ -168,6 +174,10 @@
         </div>
       </div>
     </section>
+    <footer class="footer">
+      <p>Chambre À Nesle — hospitalité confidentielle dans la Somme. Créé avec soin et le vert d'eau #009698.</p>
+      <p><a href="#reservation">Préparer mon séjour</a></p>
+    </footer>
   </main>
 
   <script src="/js/main.js"></script>
