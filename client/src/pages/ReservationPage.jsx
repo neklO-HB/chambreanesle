@@ -16,7 +16,7 @@ export default function ReservationPage() {
           <h1 className="text-4xl font-bold text-black mb-4">Réserver votre séjour</h1>
           <p>
             Choisissez vos dates, vos envies et laissez-nous préparer votre arrivée à Nesle, dans la Somme. Paiement sécurisé
-            via Stripe, confirmations envoyées automatiquement.
+            via Stripe.
           </p>
           <div className="w-20 h-1 bg-white mx-auto mt-4" />
           <p className="text-black/80">Arrivée : 17h30 · Départ : 11h30 · Réservations à la nuitée</p>

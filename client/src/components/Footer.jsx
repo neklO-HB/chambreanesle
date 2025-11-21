@@ -32,33 +32,30 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-bold mb-6">Navigation</h4>
             <ul className="space-y-3">
-              <li><a href="/" className="transition duration-300">Accueil</a></li>
-              <li><a href="/chambres" className="transition duration-300">Nos chambres Eva, Eden, Sohan</a></li>
-              <li><a href="/reserver" className="transition duration-300">Réserver une chambre</a></li>
-              <li><a href="/a-propos" className="transition duration-300">Chambre d'hôtes à Nesle</a></li>
-              <li><a href="/contact" className="transition duration-300">Contact & accès</a></li>
+              <li><a href="#" className="transition duration-300 text-black">Accueil</a></li>
+              <li><a href="/chambres" className="transition duration-300 text-black">Nos chambres Eva, Eden, Sohan</a></li>
+              <li><a href="/reserver" className="transition duration-300 text-black">Réserver une chambre</a></li>
+              <li><a href="/a-propos" className="transition duration-300 text-black">Chambre d'hôtes à Nesle</a></li>
+              <li><a href="/contact" className="transition duration-300 text-black">Contact & accès</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-lg font-bold mb-6">Contact & newsletter</h4>
+            <h4 className="text-lg font-bold mb-6">Contact</h4>
             <p className="text-black mb-2">chambreanesle@gmail.com</p>
             <p className="text-black mb-4">0648939733</p>
-            <form className="flex">
-              <input
-                type="email"
-                placeholder="Votre email"
-                className="px-4 py-2 w-full rounded-l-lg text-black focus:outline-none border border-black/10"
-              />
-              <button className="bg-black hover:bg-secondary px-4 rounded-r-lg text-white">
-                <i className="fas fa-paper-plane" aria-hidden />
-              </button>
-            </form>
+            <p className="text-black/70 text-sm">SIRET : 90182787300018</p>
           </div>
         </div>
 
-        <div className="border-t border-black pt-8 text-center text-black">
-          <p>&copy; 2025 ChambreANesle. Tous droits réservés.</p>
+        <div className="border-t border-black pt-8 text-center text-black flex flex-col items-center gap-2">
+          <p>
+            &copy; 2025 ChambreANesle. Tous droits réservés. Site réalisé avec ❤️ par{' '}
+            <a href="https://dmcsolutions.fr" className="font-semibold underline" target="_blank" rel="noreferrer">
+              DMCSOLUTIONS
+            </a>
+          </p>
+          <img src="https://i.postimg.cc/FzWsdZRk/logoblanc.png" alt="DMCSOLUTIONS" className="h-8 object-contain" />
         </div>
       </div>
     </footer>

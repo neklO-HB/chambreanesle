@@ -30,7 +30,7 @@ export default function BookingForm({ rooms }) {
   const [status, setStatus] = useState({ type: 'idle', message: '' });
   const [activeBooking, setActiveBooking] = useState(null);
   const [stripeSettings, setStripeSettings] = useState(() => getStripeSettings());
-  const [contact, setContact] = useState({ fullName: '', email: '', phone: '' });
+  const [contact, setContact] = useState({ fullName: '', email: '', phone: '', company: '' });
 
   useEffect(() => {
     getBookings()
@@ -232,9 +232,12 @@ export default function BookingForm({ rooms }) {
                 value={contact.phone}
                 onChange={(e) => setContact({ ...contact, phone: e.target.value })}
               />
-              <p className="text-xs text-black/70">
-                Confirmations envoyées à chambreanesle@gmail.com et dylanmonard80700@gmail.com.
-              </p>
+              <input
+                className="w-full border border-black/10 rounded-lg px-4 py-2"
+                placeholder="Société (optionnel)"
+                value={contact.company}
+                onChange={(e) => setContact({ ...contact, company: e.target.value })}
+              />
             </div>
           </div>
 
