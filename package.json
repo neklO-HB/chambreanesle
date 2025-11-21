@@ -16,8 +16,7 @@
     "lint:client": "eslint client/src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "start:server": "node server/src/index.js",
     "dev:server": "nodemon server/src/index.js",
-    "initdb": "node server/src/initdb.js",
-    "postinstall": "npm run build:client"
+    "initdb": "node server/src/initdb.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
