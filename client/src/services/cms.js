@@ -5,7 +5,8 @@ const hasWindow = () => typeof window !== 'undefined';
 
 const parseJson = (value, fallback) => {
   try {
-    return JSON.parse(value);
+    const parsed = JSON.parse(value);
+    return parsed ?? fallback;
   } catch (err) {
     return fallback;
   }
@@ -14,7 +15,8 @@ const parseJson = (value, fallback) => {
 export function getSections(page) {
   if (!hasWindow()) return [];
   const stored = localStorage.getItem(SECTION_KEY);
-  const sections = parseJson(stored, []);
+  const parsed = parseJson(stored, []);
+  const sections = Array.isArray(parsed) ? parsed : [];
   if (!page) return sections;
   return sections.filter((section) => section.page === page);
 }

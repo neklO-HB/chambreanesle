@@ -6,7 +6,8 @@ const hasWindow = () => typeof window !== 'undefined';
 
 const parseJson = (value, fallback) => {
   try {
-    return JSON.parse(value);
+    const parsed = JSON.parse(value);
+    return parsed ?? fallback;
   } catch (err) {
     return fallback;
   }
