@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chambre à Nesle - Hébergement de Charme</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#009698',
+                        secondary: '#007a7c',
+                        accent: '#00b8ba',
+                        dark: '#2d3748',
+                        light: '#f8f9fa'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(0, 150, 152, 0.8) 0%, rgba(0, 122, 124, 0.9) 100%), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .room-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .room-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .calendar-day {
+            transition: all 0.2s ease;
+        }
+        
+        .calendar-day.available:hover {
+            background-color: #009698;
+            color: white;
+        }
+        
+        .calendar-day.booked {
+            background-color: #e53e3e;
+            color: white;
+        }
+        
+        .calendar-day.past {
+            background-color: #e2e8f0;
+            color: #a0aec0;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(to right, #009698, #00b8ba);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .feature-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .nav-link {
+            position: relative;
+            padding-bottom: 5px;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #009698;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .testimonial-card {
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md py-4 px-6 sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="text-primary font-bold text-2xl mr-2">Chambre à Nesle</div>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="nav-link text-dark hover:text-primary font-medium">Accueil</a>
+                <a href="#rooms" class="nav-link text-dark hover:text-primary font-medium">Nos Chambres</a>
+                <a href="#booking" class="nav-link text-dark hover:text-primary font-medium">Réservation</a>
+                <a href="#about" class="nav-link text-dark hover:text-primary font-medium">À Propos</a>
+                <a href="#contact" class="nav-link text-dark hover:text-primary font-medium">Contact</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="loginBtn" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg transition duration-300">
+                    Espace Membre
+                </button>
+                <button class="md:hidden text-dark">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <section id="home" class="hero-bg text-white py-20 md:py-32">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 fade-in">Chambre à Nesle</h1>
+            <p class="text-xl md:text-2xl mb-10 max-w-3xl mx-auto fade-in">Un havre de paix au cœur de la nature, où le confort rencontre l'authenticité</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 fade-in">
+                <a href="#rooms" class="bg-primary hover:bg-secondary text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 transform hover:scale-105">
+                    Découvrir nos chambres
+                </a>
+                <a href="#booking" class="bg-transparent border-2 border-white hover:bg-white hover:text-primary text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300">
+                    Réserver maintenant
+                </a>
+            </div>
+        </div>
+    </section>
+    <!-- Features Section -->
+    <section class="py-16 bg-light">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-dark mb-4">Pourquoi choisir Chambre à Nesle ?</h2>
+                <div class="w-20 h-1 bg-primary mx-auto"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="text-center feature-icon">
+                    <div class="bg-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-mountain text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Cadre Exceptionnel</h3>
+                    <p class="text-gray-600">Nichée dans un écrin de verdure, notre chambre d'hôtes offre un cadre paisible et enchanteur.</p>
+                </div>
+                <div class="text-center feature-icon">
+                    <div class="bg-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-concierge-bell text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Service Personnalisé</h3>
+                    <p class="text-gray-600">Notre équipe attentionnée s'assure que chaque détail de votre séjour soit parfait.</p>
+                </div>
+                <div class="text-center feature-icon">
+                    <div class="bg-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-utensils text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Cuisine Locale</h3>
+                    <p class="text-gray-600">Dégustez des produits locaux savoureux préparés avec passion et savoir-faire.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Rooms Section -->
+    <section id="rooms" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-dark mb-4">Nos Chambres</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Trois espaces uniques conçus pour votre confort et votre détente</p>
+                <div class="w-20 h-1 bg-primary mx-auto mt-4"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <!-- Room 1 -->
+                <div class="room-card bg-white rounded-xl overflow-hidden shadow-lg">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Chambre Eva" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-2xl font-bold text-dark">Eva</h3>
+                            <span class="bg-primary text-white px-3 py-1 rounded-full text-sm">À partir de 120€/nuit</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Une chambre romantique avec vue sur le jardin, décorée avec raffinement.</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">Double</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">Balcon</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">Jacuzzi</span>
+                        </div>
+                        <button class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg transition duration-300">
+                            Voir les détails
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Room 2 -->
+                <div class="room-card bg-white rounded-xl overflow-hidden shadow-lg">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Chambre Sohan" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-2xl font-bold text-dark">Sohan</h3>
+                            <span class="bg-primary text-white px-3 py-1 rounded-full text-sm">À partir de 140€/nuit</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Une suite spacieuse avec cheminée et baignoire spa pour un séjour luxueux.</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">Suite</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">Cheminée</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">Vue panoramique</span>
+                        </div>
+                        <button class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg transition duration-300">
+                            Voir les détails
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Room 3 -->
+                <div class="room-card bg-white rounded-xl overflow-hidden shadow-lg">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Chambre Eden" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-2xl font-bold text-dark">Eden</h3>
+                            <span class="bg-primary text-white px-3 py-1 rounded-full text-sm">À partir de 110€/nuit</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Une chambre cosy avec décoration champêtre et accès direct au jardin.</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">Simple/Lit double</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">Jardin privé</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">Petit déjeuner inclus</span>
+                        </div>
+                        <button class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg transition duration-300">
+                            Voir les détails
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Booking Section -->
+    <section id="booking" class="py-20 bg-light">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-dark mb-4">Réservez Votre Séjour</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Consultez la disponibilité et réservez en ligne en toute simplicité</p>
+                <div class="w-20 h-1 bg-primary mx-auto mt-4"></div>
+            </div>
+            
+            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 md:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-bold text-dark mb-6">Sélectionnez une chambre</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:border-primary cursor-pointer">
+                                <input type="radio" name="room" id="eva" class="h-5 w-5 text-primary focus:ring-primary">
+                                <label for="eva" class="ml-4 flex-1">
+                                    <div class="flex justify-between">
+                                        <span class="font-medium text-dark">Eva</span>
+                                        <span class="text-primary font-medium">120€/nuit</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">Chambre romantique avec balcon</p>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:border-primary cursor-pointer">
+                                <input type="radio" name="room" id="sohan" class="h-5 w-5 text-primary focus:ring-primary">
+                                <label for="sohan" class="ml-4 flex-1">
+                                    <div class="flex justify-between">
+                                        <span class="font-medium text-dark">Sohan</span>
+                                        <span class="text-primary font-medium">140€/nuit</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">Suite spacieuse avec cheminée</p>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:border-primary cursor-pointer">
+                                <input type="radio" name="room" id="eden" class="h-5 w-5 text-primary focus:ring-primary">
+                                <label for="eden" class="ml-4 flex-1">
+                                    <div class="flex justify-between">
+                                        <span class="font-medium text-dark">Eden</span>
+                                        <span class="text-primary font-medium">110€/nuit</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">Chambre cosy avec jardin privé</p>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8">
+                            <h3 class="text-2xl font-bold text-dark mb-6">Informations de réservation</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Dates de séjour</label>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <input type="date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                        </div>
+                                        <div>
+                                            <input type="date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Nombre de personnes</label>
+                                    <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                        <option>1 personne</option>
+                                        <option>2 personnes</option>
+                                        <option>3 personnes</option>
+                                        <option>4 personnes</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Services supplémentaires</label>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" id="breakfast" class="h-4 w-4 text-primary focus:ring-primary">
+                                            <label for="breakfast" class="ml-2 text-gray-700">Petit déjeuner (20€/personne)</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="checkbox" id="spa" class="h-4 w-4 text-primary focus:ring-primary">
+                                            <label for="spa" class="ml-2 text-gray-700">Accès spa (35€/personne)</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-2xl font-bold text-dark mb-6">Disponibilité</h3>
+                        <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <button class="p-2 rounded-full hover:bg-gray-200">
+                                    <i class="fas fa-chevron-left text-gray-600"></i>
+                                </button>
+                                <h4 class="font-bold text-lg">Juillet 2023</h4>
+                                <button class="p-2 rounded-full hover:bg-gray-200">
+                                    <i class="fas fa-chevron-right text-gray-600"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="grid grid-cols-7 gap-1 mb-2">
+                                <div class="text-center text-xs font-medium text-gray-500 py-1">Dim</div>
+                                <div class="text-center text-xs font-medium text-gray-500 py-1">Lun</div>
+                                <div class="text-center text-xs font-medium text-gray-500 py-1">Mar</div>
+                                <div class="text-center text-xs font-medium text-gray-500 py-1">Mer</div>
+                                <div class="text-center text-xs font-medium text-gray-500 py-1">Jeu</div>
+                                <div class="text-center text-xs font-medium text-gray-500 py-1">Ven</div>
+                                <div class="text-center text-xs font-medium text-gray-500 py-1">Sam</div>
+                            </div>
+                            
+                            <div class="grid grid-cols-7 gap-1">
+                                <!-- Calendar days -->
+                                <div class="calendar-day past text-center p-2 rounded text-sm">25</div>
+                                <div class="calendar-day past text-center p-2 rounded text-sm">26</div>
+                                <div class="calendar-day past text-center p-2 rounded text-sm">27</div>
+                                <div class="calendar-day past text-center p-2 rounded text-sm">28</div>
+                                <div class="calendar-day past text-center p-2 rounded text-sm">29</div>
+                                <div class="calendar-day past text-center p-2 rounded text-sm">30</div>
+                                <div class="calendar-day booked text-center p-2 rounded text-sm">1</div>
+                                
+                                <div class="calendar-day booked text-center p-2 rounded text-sm">2</div>
+                                <div class="calendar-day booked text-center p-2 rounded text-sm">3</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">4</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">5</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">6</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">7</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">8</div>
+                                
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">9</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">10</div>
+                                <div class="calendar-day booked text-center p-2 rounded text-sm">11</div>
+                                <div class="calendar-day booked text-center p-2 rounded text-sm">12</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">13</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">14</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">15</div>
+                                
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">16</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">17</div>
+                                <div class="calendar-day booked text-center p-2 rounded text-sm">18</div>
+                                <div class="calendar-day booked text-center p-2 rounded text-sm">19</div>
+                                <div class="calendar-day booked text-center p-2 rounded text-sm">20</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">21</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">22</div>
+                                
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">23</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">24</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">25</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">26</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">27</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">28</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">29</div>
+                                
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">30</div>
+                                <div class="calendar-day available text-center p-2 rounded text-sm cursor-pointer">31</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h4 class="font-bold text-dark mb-3">Légende</h4>
+                            <div class="flex flex-wrap gap-4">
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 bg-gray-200 rounded mr-2"></div>
+                                    <span class="text-sm">Indisponible</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 bg-green-500 rounded mr-2"></div>
+                                    <span class="text-sm">Disponible</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
+                                    <span class="text-sm">Réservé</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-6">
+                            <h4 class="font-bold text-dark mb-4">Récapitulatif</h4>
+                            <div class="space-y-3 mb-4">
+                                <div class="flex justify-between">
+                                    <span>3 nuits - Chambre Eva</span>
+                                    <span>360€</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Petit déjeuner (2 pers.)</span>
+                                    <span>40€</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Taxes</span>
+                                    <span>15€</span>
+                                </div>
+                                <div class="border-t border-gray-300 pt-3 flex justify-between font-bold text-lg">
+                                    <span>Total</span>
+                                    <span class="text-primary">415€</span>
+                                </div>
+                            </div>
+                            <button class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg transition duration-300 flex items-center justify-center">
+                                <i class="fab fa-stripe mr-2"></i> Payer avec Stripe
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Testimonials Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-dark mb-4">Témoignages de nos clients</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Découvrez ce que nos hôtes disent de leur expérience</p>
+                <div class="w-20 h-1 bg-primary mx-auto mt-4"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="testimonial-card bg-light rounded-xl p-6 shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400 flex">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic mb-6">"Un endroit magique ! Le calme, la beauté des lieux et l'accueil chaleureux ont fait de notre séjour une expérience inoubliable."</p>
+                    <div class="flex items-center">
+                        <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+                        <div class="ml-4">
+                            <h4 class="font-bold text-dark">Sophie & Pierre</h4>
+                            <p class="text-gray-500 text-sm">Paris, France</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card bg-light rounded-xl p-6 shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400 flex">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic mb-6">"Nous avons passé un week-end fabuleux. La chambre était magnifique, le petit déjeuner délicieux et le propriétaire très sympathique."</p>
+                    <div class="flex items-center">
+                        <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+                        <div class="ml-4">
+                            <h4 class="font-bold text-dark">Thomas Martin</h4>
+                            <p class="text-gray-500 text-sm">Lyon, France</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card bg-light rounded-xl p-6 shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400 flex">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic mb-6">"Parfait pour une escapade romantique. La chambre Eva est tout simplement sublime. Nous reviendrons très certainement !"</p>
+                    <div class="flex items-center">
+                        <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+                        <div class="ml-4">
+                            <h4 class="font-bold text-dark">Camille Dubois</h4>
+                            <p class="text-gray-500 text-sm">Bruxelles, Belgique</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-light">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0 md:pr-10">
+                    <div class="bg-gray-200 border-2 border-dashed rounded-xl w-full h-96" />
+                </div>
+                <div class="md:w-1/2">
+                    <h2 class="text-3xl md:text-4xl font-bold text-dark mb-6">Notre Histoire</h2>
+                    <p class="text-gray-600 mb-6">Nichée dans un écrin de verdure à Nesle, notre chambre d'hôtes vous accueille dans un cadre exceptionnel. Ancienne ferme rénovée avec soin, elle allie charme traditionnel et confort moderne.</p>
+                    <p class="text-gray-600 mb-6">Passionnés par l'accueil et le bien-être de nos hôtes, nous mettons tout en œuvre pour que votre séjour soit parfait. Chaque chambre est unique et a été pensée pour vous offrir un moment de détente et de douceur.</p>
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-primary mr-3"></i>
+                            <span>Chambres individuelles</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-primary mr-3"></i>
+                            <span>Jardin privatif</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-primary mr-3"></i>
+                            <span>Piscine saisonnière</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-primary mr-3"></i>
+                            <span>Spa & massages</span>
+                        </div>
+                    </div>
+                    <button class="bg-primary hover:bg-secondary text-white py-3 px-8 rounded-lg transition duration-300">
+                        En savoir plus
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-dark mb-4">Contactez-nous</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Vous avez des questions ? Notre équipe est à votre disposition</p>
+                <div class="w-20 h-1 bg-primary mx-auto mt-4"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-bold text-dark mb-6">Informations de contact</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="bg-primary w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-map-marker-alt text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-dark mb-1">Adresse</h4>
+                                <p class="text-gray-600">Route de la Campagne, 80200 Nesle, France</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-primary w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-phone-alt text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-dark mb-1">Téléphone</h4>
+                                <p class="text-gray-600">+33 3 22 12 34 56</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-primary w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-envelope text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-dark mb-1">Email</h4>
+                                <p class="text-gray-600">contact@chambrenesle.fr</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-primary w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-clock text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-dark mb-1">Horaires d'ouverture</h4>
+                                <p class="text-gray-600">Lundi - Dimanche : 8h - 20h</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-10">
+                        <h3 class="text-2xl font-bold text-dark mb-6">Suivez-nous</h3>
+                        <div class="flex space-x-4">
+                            <a href="#" class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-secondary transition duration-300">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-secondary transition duration-300">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-secondary transition duration-300">
+                                <i class="fab fa-pinterest-p"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-bold text-dark mb-6">Envoyez-nous un message</h3>
+                    <form class="space-y-6">
+                        <div>
+                            <label class="block text-gray-700 mb-2">Nom complet</label>
+                            <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Email</label>
+                            <input type="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Sujet</label>
+                            <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Message</label>
+                            <textarea rows="5" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="bg-primary hover:bg-secondary text-white py-3 px-8 rounded-lg transition duration-300 w-full">
+                            Envoyer le message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer class="bg-dark text-white pt-16 pb-8">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <div>
+                    <h3 class="text-xl font-bold mb-6">Chambre à Nesle</h3>
+                    <p class="text-gray-400 mb-6">Une expérience authentique au cœur de la nature, où le confort rencontre l'élégance.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                            <i class="fab fa-pinterest-p"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Liens rapides</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition duration-300">Accueil</a></li>
+                        <li><a href="#rooms" class="text-gray-400 hover:text-white transition duration-300">Nos chambres</a></li>
+                        <li><a href="#booking" class="text-gray-400 hover:text-white transition duration-300">Réservation</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition duration-300">À propos</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white transition duration-300">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Nos chambres</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Chambre Eva</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Suite Sohan</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Chambre Eden</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Tarifs & Disponibilités</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Offres spéciales</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Newsletter</h4>
+                    <p class="text-gray-400 mb-4">Inscrivez-vous pour recevoir nos offres exclusives</p>
+                    <form class="flex">
+                        <input type="email" placeholder="Votre email" class="px-4 py-2 w-full rounded-l-lg focus:outline-none text-dark">
+                        <button class="bg-primary hover:bg-secondary px-4 rounded-r-lg">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500">
+                <p>&copy; 2023 Chambre à Nesle. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl w-full max-w-md p-8 relative">
+            <button id="closeModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <h3 class="text-2xl font-bold text-center text-dark mb-6">Espace Membre</h3>
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-gray-700 mb-2">Nom d'utilisateur</label>
+                    <input type="text" id="username" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">Mot de passe</label>
+                    <input type="password" id="password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember" class="h-4 w-4 text-primary focus:ring-primary">
+                        <label for="remember" class="ml-2 text-gray-700">Se souvenir de moi</label>
+                    </div>
+                    <a href="#" class="text-primary hover:underline">Mot de passe oublié ?</a>
+                </div>
+                <button type="submit" class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg transition duration-300">
+                    Se connecter
+                </button>
+            </form>
+            <div class="mt-6 text-center">
+                <p class="text-gray-600">Vous n'avez pas de compte ? <a href="#" class="text-primary hover:underline">S'inscrire</a></p>
+            </div>
+        </div>
+    </div>
+    <!-- Admin Panel Modal -->
+    <div id="adminPanel" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl w-full max-w-4xl h-5/6 overflow-hidden">
+            <div class="bg-primary text-white p-6 flex justify-between items-center">
+                <h3 class="text-2xl font-bold">Administration</h3>
+                <button id="closeAdmin" class="text-white hover:text-gray-200">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <div class="flex h-full">
+                <div class="w-64 bg-gray-100 p-6">
+                    <ul class="space-y-4">
+                        <li>
+                            <a href="#" class="block py-3 px-4 bg-primary text-white rounded-lg">
+                                <i class="fas fa-calendar-alt mr-3"></i>Réservations
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="block py-3 px-4 text-gray-700 hover:bg-gray-200 rounded-lg">
+                                <i class="fas fa-bed mr-3"></i>Chambres
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="block py-3 px-4 text-gray-700 hover:bg-gray-200 rounded-lg">
+                                <i class="fas fa-users mr-3"></i>Clients
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="block py-3 px-4 text-gray-700 hover:bg-gray-200 rounded-lg">
+                                <i class="fas fa-chart-line mr-3"></i>Statistiques
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="block py-3 px-4 text-gray-700 hover:bg-gray-200 rounded-lg">
+                                <i class="fas fa-cog mr-3"></i>Paramètres
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="flex-1 p-6 overflow-y-auto">
+                    <h4 class="text-xl font-bold text-dark mb-6">Gestion des Réservations</h4>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead>
+                                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                    <th class="py-3 px-6 text-left">Client</th>
+                                    <th class="py-3 px-6 text-left">Chambre</th>
+                                    <th class="py-3 px-6 text-left">Dates</th>
+                                    <th class="py-3 px-6 text-left">Statut</th>
+                                    <th class="py-3 px-6 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 text-sm font-light">
+                                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                    <td class="py-3 px-6 text-left whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <span>Sophie Martin</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-6 text-left">Eva</td>
+                                    <td class="py-3 px-6 text-left">15-18 juil. 2023</td>
+                                    <td class="py-3 px-6 text-left">
+                                        <span class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs">Confirmée</span>
+                                    </td>
+                                    <td class="py-3 px-6 text-left">
+                                        <div class="flex item-center justify-start">
+                                            <a href="#" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="#" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="#" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                    <td class="py-3 px-6 text-left whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <span>Thomas Dubois</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-6 text-left">Sohan</td>
+                                    <td class="py-3 px-6 text-left">20-25 juil. 2023</td>
+                                    <td class="py-3 px-6 text-left">
+                                        <span class="bg-blue-200 text-blue-600 py-1 px-3 rounded-full text-xs">En attente</span>
+                                    </td>
+                                    <td class="py-3 px-6 text-left">
+                                        <div class="flex item-center justify-start">
+                                            <a href="#" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="#" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="#" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                    <td class="py-3 px-6 text-left whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <span>Camille Leroy</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-6 text-left">Eden</td>
+                                    <td class="py-3 px-6 text-left">05-08 août 2023</td>
+                                    <td class="py-3 px-6 text-left">
+                                        <span class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs">Confirmée</span>
+                                    </td>
+                                    <td class="py-3 px-6 text-left">
+                                        <div class="flex item-center justify-start">
+                                            <a href="#" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="#" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="#" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Login functionality
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            document.getElementById('loginModal').classList.remove('hidden');
+        });
+        
+        document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('loginModal').classList.add('hidden');
+        });
+        
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Default admin credentials
+            if(username === 'DylanM' && password === 'Didi0509@') {
+                document.getElementById('loginModal').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+            } else {
+                alert('Identifiants incorrects');
+            }
+        });
+        
+        document.getElementById('closeAdmin').addEventListener('click', function() {
+            document.getElementById('adminPanel').classList.add('hidden');
+        });
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            const loginModal = document.getElementById('loginModal');
+            const adminPanel = document.getElementById('adminPanel');
+            
+            if (event.target === loginModal) {
+                loginModal.classList.add('hidden');
+            }
+            
+            if (event.target === adminPanel) {
+                adminPanel.classList.add('hidden');
+            }
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Calendar interaction
+        document.querySelectorAll('.calendar-day.available').forEach(day => {
+            day.addEventListener('click', function() {
+                this.classList.toggle('bg-primary');
+                this.classList.toggle('text-white');
+            });
+        });
+    </script>
+</body>
+</html>
