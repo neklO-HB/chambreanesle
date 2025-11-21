@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getBookings } from '../services/api';
+import { getBookings, getStripeSettings, rooms as roomOptions, saveStripeSettings } from '../services/api';
 import { addMember, deleteMember, getMembers, getSections, upsertSection } from '../services/cms';
+import { addRoomPhoto, getAllGalleriesSnapshot, removeRoomPhoto } from '../services/gallery';
 
 const ADMIN_EMAIL = 'admin@chambreanesle.fr';
 const ADMIN_PASSWORD = 'Brianmathilde69@';
@@ -9,6 +10,8 @@ const tabs = [
   { key: 'overview', label: 'Vue générale', icon: 'fa-gauge' },
   { key: 'members', label: 'Membres', icon: 'fa-users' },
   { key: 'bookings', label: 'Réservations', icon: 'fa-calendar-check' },
+  { key: 'photos', label: 'Galerie chambres', icon: 'fa-images' },
+  { key: 'payments', label: 'Paiement Stripe', icon: 'fa-credit-card' },
   { key: 'cms', label: 'Pages & contenu', icon: 'fa-pen-nib' }
 ];
 
@@ -24,6 +27,11 @@ export default function AdminPage() {
   const [sectionForm, setSectionForm] = useState({ page: 'home', key: 'hero', title: '', content: '' });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [stripeConfig, setStripeConfig] = useState(getStripeSettings());
+  const [galleries, setGalleries] = useState(getAllGalleriesSnapshot());
+  const [selectedGalleryRoom, setSelectedGalleryRoom] = useState(roomOptions[0]?.slug || '');
+  const [photoCaption, setPhotoCaption] = useState('');
+  const [photoUrl, setPhotoUrl] = useState('');
 
   const sectionList = useMemo(() => getSections(), [token, sectionForm]);
 
@@ -40,6 +48,8 @@ export default function AdminPage() {
     getBookings()
       .then(setBookings)
       .catch(() => setBookingsError("Impossible de charger les réservations"));
+    setStripeConfig(getStripeSettings());
+    setGalleries(getAllGalleriesSnapshot());
   }, [token]);
 
   const handleLogin = (e) => {
@@ -77,6 +87,46 @@ export default function AdminPage() {
     upsertSection(sectionForm);
     setMessage('Section sauvegardée. Elle sera utilisée comme contenu personnalisé.');
     setError('');
+  };
+
+  const handleSaveStripe = (e) => {
+    e.preventDefault();
+    const merged = saveStripeSettings(stripeConfig);
+    setStripeConfig(merged);
+    setMessage('Paramètres Stripe mis à jour.');
+    setError('');
+  };
+
+  const handleFileUpload = (file) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const updated = addRoomPhoto(selectedGalleryRoom, { src: reader.result, caption: photoCaption });
+      setGalleries((prev) => ({ ...prev, [selectedGalleryRoom]: updated }));
+      setMessage('Photo ajoutée à la galerie de la chambre.');
+      setPhotoCaption('');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handlePhotoInput = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    handleFileUpload(file);
+  };
+
+  const handleAddPhotoUrl = (e) => {
+    e.preventDefault();
+    if (!photoUrl) return;
+    const updated = addRoomPhoto(selectedGalleryRoom, { src: photoUrl, caption: photoCaption });
+    setGalleries((prev) => ({ ...prev, [selectedGalleryRoom]: updated }));
+    setMessage('Photo distante ajoutée.');
+    setPhotoCaption('');
+    setPhotoUrl('');
+  };
+
+  const handleRemovePhoto = (roomSlug, photoId) => {
+    const updated = removeRoomPhoto(roomSlug, photoId);
+    setGalleries((prev) => ({ ...prev, [roomSlug]: updated }));
   };
 
   const handleLogout = () => {
@@ -279,6 +329,133 @@ export default function AdminPage() {
               ))}
               {!bookings.length && <p className="text-black/70">Aucune réservation pour le moment.</p>}
             </div>
+          </div>
+        )}
+
+        {activeTab === 'photos' && (
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-black/5">
+              <h3 className="text-xl font-bold text-black mb-4">Ajouter une photo</h3>
+              <form className="space-y-3" onSubmit={handleAddPhotoUrl}>
+                <div>
+                  <label className="text-sm font-semibold text-black">Chambre</label>
+                  <select
+                    className="w-full border border-black/10 rounded-lg px-3 py-2"
+                    value={selectedGalleryRoom}
+                    onChange={(e) => setSelectedGalleryRoom(e.target.value)}
+                  >
+                    {roomOptions.map((room) => (
+                      <option key={room.slug} value={room.slug}>
+                        {room.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <input
+                  className="w-full border border-black/10 rounded-lg px-3 py-2"
+                  placeholder="Légende (facultatif)"
+                  value={photoCaption}
+                  onChange={(e) => setPhotoCaption(e.target.value)}
+                />
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-black">Importer depuis l'ordinateur</label>
+                  <input type="file" accept="image/*" onChange={handlePhotoInput} className="w-full" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-black">Ou coller une URL d'image</label>
+                  <input
+                    className="w-full border border-black/10 rounded-lg px-3 py-2"
+                    placeholder="https://..."
+                    value={photoUrl}
+                    onChange={(e) => setPhotoUrl(e.target.value)}
+                  />
+                </div>
+                <button type="submit" className="w-full bg-black text-white rounded-lg py-2 font-semibold cta-button">
+                  Ajouter à la galerie
+                </button>
+              </form>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-black/5">
+              <h3 className="text-xl font-bold text-black mb-4">Galeries</h3>
+              <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
+                {roomOptions.map((room) => (
+                  <div key={room.slug} className="border border-black/10 rounded-lg p-3 bg-primary/5">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="font-semibold text-black">{room.name}</p>
+                      <span className="text-xs bg-white border border-black/10 rounded-full px-3 py-1">
+                        {(galleries[room.slug] || []).length} photo(s)
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {(galleries[room.slug] || []).map((photo) => (
+                        <div key={photo.id} className="relative group rounded-lg overflow-hidden border border-black/5">
+                          <img src={photo.src} alt={photo.caption || room.name} className="w-full h-24 object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => handleRemovePhoto(room.slug, photo.id)}
+                            className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1 text-xs opacity-0 group-hover:opacity-100"
+                          >
+                            <i className="fas fa-times" aria-hidden />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'payments' && (
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-black/5">
+            <h3 className="text-xl font-bold text-black mb-4">Configurer Stripe</h3>
+            <form className="grid md:grid-cols-2 gap-4" onSubmit={handleSaveStripe}>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-black">Activation Stripe</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={stripeConfig.enableStripe}
+                    onChange={(e) => setStripeConfig({ ...stripeConfig, enableStripe: e.target.checked })}
+                  />
+                  <span>Activer le paiement en ligne</span>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-black">Publishable key</label>
+                <input
+                  className="w-full border border-black/10 rounded-lg px-3 py-2"
+                  value={stripeConfig.publishableKey}
+                  onChange={(e) => setStripeConfig({ ...stripeConfig, publishableKey: e.target.value })}
+                  placeholder="pk_live_..."
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-black">Secret key</label>
+                <input
+                  className="w-full border border-black/10 rounded-lg px-3 py-2"
+                  value={stripeConfig.secretKey}
+                  onChange={(e) => setStripeConfig({ ...stripeConfig, secretKey: e.target.value })}
+                  placeholder="sk_live_..."
+                />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-semibold text-black">Emails de notification Stripe</label>
+                <input
+                  className="w-full border border-black/10 rounded-lg px-3 py-2"
+                  value={(stripeConfig.webhookEmails || []).join(', ')}
+                  onChange={(e) => setStripeConfig({ ...stripeConfig, webhookEmails: e.target.value.split(',').map((mail) => mail.trim()).filter(Boolean) })}
+                  placeholder="email1@example.com, email2@example.com"
+                />
+              </div>
+              <button type="submit" className="bg-black text-white rounded-lg py-3 font-semibold cta-button md:col-span-2">
+                Sauvegarder les paramètres
+              </button>
+            </form>
+            <p className="text-sm text-black/60 mt-3">
+              Les confirmations de réservation sont envoyées à chambreanesle@gmail.com et dylanmonard80700@gmail.com.
+            </p>
           </div>
         )}
 

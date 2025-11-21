@@ -1,6 +1,7 @@
 const contacts = [
-  { label: 'Téléphone', value: '+33 1 23 45 67 89', href: 'tel:+33123456789' },
-  { label: 'Email', value: 'contact@chambre-nesle.fr', href: 'mailto:contact@chambre-nesle.fr' },
+  { label: 'Téléphone', value: '0648939733', href: 'tel:0648939733' },
+  { label: 'Email', value: 'dupuisbrian80@outlook.fr', href: 'mailto:dupuisbrian80@outlook.fr' },
+  { label: 'Email confirmations', value: 'chambreanesle@gmail.com · dylanmonard80700@gmail.com' },
   { label: 'Adresse', value: 'Nesle, 80190, Hauts-de-France' }
 ];
 
