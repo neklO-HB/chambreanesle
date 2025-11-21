@@ -1,4 +1,5 @@
-import { findRoom, rooms } from '../data/rooms';
+import { getExtras } from './extras';
+import { getRoomBySlug, getRoomCatalog, getRoomOptionsSnapshot } from './roomSettings';
 
 const BOOKING_KEY = 'chambreanesle_bookings';
 const STRIPE_SETTINGS_KEY = 'stripe_settings';
@@ -6,48 +7,59 @@ const CALENDAR_SYNC_KEY = 'calendar_sync_urls';
 const BOOKING_NOTIFICATIONS = ['chambreanesle@gmail.com', 'dylanmonard80700@gmail.com'];
 const CONTACT_EMAIL = 'dupuisbrian80@outlook.fr';
 const CONTACT_PHONE = '0648939733';
+const SITE_NUMBER = 'Site n° CHAN-80700';
 
-const defaultBookings = [
-  {
-    id: 'seed-1',
-    roomSlug: 'eva',
-    roomName: 'Eva',
-    roomId: 1,
-    startDate: '2024-07-15',
-    endDate: '2024-07-18',
-    guests: 2,
-    extras: ['Petit déjeuner'],
-    status: 'confirmée',
-    createdAt: new Date().toISOString(),
-    reservationNumber: 'AN-240715-01'
-  },
-  {
-    id: 'seed-2',
-    roomSlug: 'sohan',
-    roomName: 'Sohan',
-    roomId: 2,
-    startDate: '2024-07-20',
-    endDate: '2024-07-23',
-    guests: 2,
-    extras: ['Petit déjeuner', 'Accès spa'],
-    status: 'confirmée',
-    createdAt: new Date().toISOString(),
-    reservationNumber: 'AN-240720-02'
-  },
-  {
-    id: 'seed-3',
-    roomSlug: 'eden',
-    roomName: 'Eden',
-    roomId: 3,
-    startDate: '2024-08-05',
-    endDate: '2024-08-08',
-    guests: 3,
-    extras: [],
-    status: 'confirmée',
-    createdAt: new Date().toISOString(),
-    reservationNumber: 'AN-240805-03'
-  }
-];
+const buildSeedBookings = () => {
+  const rooms = getRoomCatalog();
+  const eva = rooms.find((room) => room.slug === 'eva');
+  const sohan = rooms.find((room) => room.slug === 'sohan');
+  const eden = rooms.find((room) => room.slug === 'eden');
+
+  return [
+    {
+      id: 'seed-1',
+      roomSlug: 'eva',
+      roomName: eva?.name || 'Eva',
+      roomId: eva?.id || 1,
+      roomPrice: eva?.price,
+      startDate: '2024-07-15',
+      endDate: '2024-07-18',
+      guests: 2,
+      extras: ['Petit déjeuner'],
+      status: 'confirmée',
+      createdAt: new Date().toISOString(),
+      reservationNumber: 'AN-240715-01'
+    },
+    {
+      id: 'seed-2',
+      roomSlug: 'sohan',
+      roomName: sohan?.name || 'Sohan',
+      roomId: sohan?.id || 2,
+      roomPrice: sohan?.price,
+      startDate: '2024-07-20',
+      endDate: '2024-07-23',
+      guests: 2,
+      extras: ['Petit déjeuner', 'Accès spa'],
+      status: 'confirmée',
+      createdAt: new Date().toISOString(),
+      reservationNumber: 'AN-240720-02'
+    },
+    {
+      id: 'seed-3',
+      roomSlug: 'eden',
+      roomName: eden?.name || 'Eden',
+      roomId: eden?.id || 3,
+      roomPrice: eden?.price,
+      startDate: '2024-08-05',
+      endDate: '2024-08-08',
+      guests: 3,
+      extras: [],
+      status: 'confirmée',
+      createdAt: new Date().toISOString(),
+      reservationNumber: 'AN-240805-03'
+    }
+  ];
+};
 
 const hasWindow = () => typeof window !== 'undefined';
 
@@ -65,8 +77,9 @@ const getStoredBookings = () => {
   const stored = localStorage.getItem(BOOKING_KEY);
   const parsed = parseJson(stored, []);
   if (parsed.length) return parsed;
-  localStorage.setItem(BOOKING_KEY, JSON.stringify(defaultBookings));
-  return defaultBookings;
+  const seeds = buildSeedBookings();
+  localStorage.setItem(BOOKING_KEY, JSON.stringify(seeds));
+  return seeds;
 };
 
 const saveBookings = (bookings) => {
@@ -93,11 +106,11 @@ export function getCalendarSync() {
 }
 
 export async function getRooms() {
-  return rooms;
+  return getRoomCatalog();
 }
 
 export async function getRoom(slug) {
-  const room = findRoom(slug);
+  const room = getRoomBySlug(slug);
   if (!room) {
     throw new Error('Chambre introuvable.');
   }
@@ -105,7 +118,29 @@ export async function getRoom(slug) {
 }
 
 export async function getBookings() {
-  return getStoredBookings();
+  const localBookings = getStoredBookings();
+  try {
+    const response = await fetch('/api/bookings');
+    if (!response.ok) throw new Error('invalid');
+    const remote = await response.json();
+    const mergedMap = new Map();
+    [...localBookings, ...remote].forEach((booking) => {
+      const id = String(booking.id || booking.reservationNumber || crypto.randomUUID());
+      const room = getRoomBySlug(booking.roomSlug || '');
+      mergedMap.set(id, {
+        ...booking,
+        id,
+        roomName: booking.roomName || room?.name,
+        roomPrice: booking.roomPrice || room?.price,
+        status: booking.status || 'confirmée'
+      });
+    });
+    const merged = Array.from(mergedMap.values());
+    saveBookings(merged);
+    return merged;
+  } catch (err) {
+    return localBookings;
+  }
 }
 
 const buildReservationNumber = (startDate) => {
@@ -143,7 +178,7 @@ export async function createBooking(payload) {
     throw new Error('Les champs roomSlug, startDate et endDate sont obligatoires.');
   }
 
-  const room = findRoom(roomSlug);
+  const room = getRoomBySlug(roomSlug);
   if (!room) {
     throw new Error('Chambre introuvable.');
   }
@@ -174,6 +209,15 @@ export async function createBooking(payload) {
 
   const updated = [...getStoredBookings(), newBooking];
   saveBookings(updated);
+  try {
+    await fetch('/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roomSlug, startDate, endDate, guests, extras })
+    });
+  } catch (err) {
+    console.warn('Impossible de synchroniser la réservation sur le serveur', err);
+  }
   return newBooking;
 }
 
@@ -205,7 +249,16 @@ export function getContactDetails() {
   return {
     phone: CONTACT_PHONE,
     email: CONTACT_EMAIL,
-    notificationEmails: BOOKING_NOTIFICATIONS
+    notificationEmails: BOOKING_NOTIFICATIONS,
+    smtp: {
+      host: 'chambreanesle.fr',
+      user: 'pas-repondre@chambreanesle.fr',
+      pass: 'Didi0509@',
+      port: 25,
+      secure: true,
+      sender: 'ChambreANesle <pas-repondre@chambreanesle.fr>'
+    },
+    siteNumber: SITE_NUMBER
   };
 }
 
@@ -224,4 +277,12 @@ export function generateICal(roomSlug) {
   return `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//ChambreANesle//Planning//FR\n${body}\nEND:VCALENDAR`;
 }
 
-export { rooms };
+export function getExtrasForForm() {
+  return getExtras();
+}
+
+export function getRoomSnapshot() {
+  return getRoomOptionsSnapshot();
+}
+
+export { SITE_NUMBER };

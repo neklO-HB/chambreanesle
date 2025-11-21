@@ -147,6 +147,38 @@ app.post('/api/bookings', (req, res) => {
   });
 });
 
+app.get('/calendars/:slug.ical', (req, res) => {
+  const { slug } = req.params;
+  const query = `
+    SELECT bookings.*, rooms.name as roomName, rooms.slug as roomSlug
+    FROM bookings
+    JOIN rooms ON rooms.id = bookings.room_id
+    WHERE rooms.slug = ?
+    ORDER BY date(start_date) ASC
+  `;
+
+  db.all(query, [slug], (err, rows) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Erreur lors de la génération du calendrier.');
+    }
+
+    const formatDate = (date) => `${date.replaceAll('-', '')}T120000Z`;
+    const body = rows
+      .map(
+        (booking) =>
+          `BEGIN:VEVENT\nUID:${booking.id}@chambreanesle\nSUMMARY:${booking.roomName}\nDTSTART:${formatDate(
+            booking.start_date
+          )}\nDTEND:${formatDate(booking.end_date)}\nEND:VEVENT`
+      )
+      .join('\n');
+
+    const payload = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//ChambreANesle//Calendrier//FR\n${body}\nEND:VCALENDAR`;
+    res.header('Content-Type', 'text/calendar; charset=utf-8');
+    res.send(payload);
+  });
+});
+
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
