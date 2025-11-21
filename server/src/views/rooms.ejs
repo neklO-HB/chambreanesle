@@ -1,0 +1,38 @@
+<%- include('partials/header', { title }) %>
+<section class="container section">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Nos chambres</p>
+      <h1>Choisissez votre ambiance</h1>
+      <p>Chacune de nos chambres est équipée du wifi, d’une literie haut de gamme et d’un espace bureau.</p>
+    </div>
+    <a href="/reservation" class="button">Réserver</a>
+  </div>
+  <div class="card-grid">
+    <% rooms.forEach((room) => { %>
+    <article class="card">
+      <img src="<%= room.image %>" alt="<%= room.name %>" loading="lazy" />
+      <div class="card-body">
+        <div class="card-head">
+          <h3><%= room.name %></h3>
+          <p class="price"><%= formatPrice(room.price) %> / nuit</p>
+        </div>
+        <p class="muted"><%= room.highlight %></p>
+        <p><%= room.description %></p>
+        <% if (room.features.length) { %>
+        <ul class="tags">
+          <% room.features.forEach((feature) => { %>
+          <li><%= feature %></li>
+          <% }) %>
+        </ul>
+        <% } %>
+        <div class="card-actions">
+          <a href="/chambres/<%= room.slug %>" class="button ghost">Voir la fiche</a>
+          <a href="/reservation?roomSlug=<%= room.slug %>" class="button">Réserver</a>
+        </div>
+      </div>
+    </article>
+    <% }) %>
+  </div>
+</section>
+<%- include('partials/footer') %>
