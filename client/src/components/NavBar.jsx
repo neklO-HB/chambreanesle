@@ -4,17 +4,15 @@ const LOGO_URL = 'https://i.postimg.cc/25L3kxTM/logo-2.webp';
 import { rooms } from '../services/api';
 
 const navLinks = [
-  { label: 'Accueil', to: '#' },
+  { label: 'Accueil', to: '/' },
   { label: 'Contact', to: '/contact' }
 ];
 
 export default function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [roomsOpen, setRoomsOpen] = useState(false);
 
   const closeMenu = () => {
     setMenuOpen(false);
-    setRoomsOpen(false);
   };
 
   return (
@@ -48,41 +46,30 @@ export default function NavBar() {
             {navLinks[0].label}
           </NavLink>
 
-          <div
-            className="relative"
-            onMouseEnter={() => setRoomsOpen(true)}
-            onMouseLeave={() => setRoomsOpen(false)}
-          >
-            <button
-              type="button"
-              className="nav-link text-black font-semibold tracking-wide"
-              onFocus={() => setRoomsOpen(true)}
-              onBlur={() => setRoomsOpen(false)}
-            >
+          <div className="relative group">
+            <button type="button" className="nav-link text-black font-semibold tracking-wide">
               Nos chambres
               <i className="fas fa-chevron-down ml-2 text-xs" aria-hidden />
             </button>
-            {roomsOpen && (
-              <div className="absolute left-0 mt-3 bg-white rounded-xl shadow-2xl p-4 min-w-[240px] border border-black/5">
-                <div className="flex flex-col gap-2">
-                  {rooms.map((room) => (
-                    <NavLink
-                      key={room.slug}
-                      to={`/chambres/${room.slug}`}
-                      onClick={closeMenu}
-                      className={({ isActive }) =>
-                        `flex justify-between items-center px-3 py-2 rounded-lg hover:bg-primary/10 text-black ${
-                          isActive ? 'bg-primary/20 font-semibold' : ''
-                        }`
-                      }
-                    >
-                      <span>{room.name}</span>
-                      <i className="fas fa-arrow-right text-xs" aria-hidden />
-                    </NavLink>
-                  ))}
-                </div>
+            <div className="absolute left-0 mt-3 bg-white rounded-xl shadow-2xl p-4 min-w-[240px] border border-black/5 opacity-0 pointer-events-none translate-y-1 group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto">
+              <div className="flex flex-col gap-2">
+                {rooms.map((room) => (
+                  <NavLink
+                    key={room.slug}
+                    to={`/chambres/${room.slug}`}
+                    onClick={closeMenu}
+                    className={({ isActive }) =>
+                      `flex justify-between items-center px-3 py-2 rounded-lg hover:bg-primary/10 text-black ${
+                        isActive ? 'bg-primary/20 font-semibold' : ''
+                      }`
+                    }
+                  >
+                    <span>{room.name}</span>
+                    <i className="fas fa-arrow-right text-xs" aria-hidden />
+                  </NavLink>
+                ))}
               </div>
-            )}
+            </div>
           </div>
 
           <NavLink
@@ -104,8 +91,8 @@ export default function NavBar() {
             Réserver
           </NavLink>
           <NavLink
-            to="/admin"
-            className="cta-button bg-[#0b7f80] text-white px-4 py-2 rounded-full font-semibold shadow-lg hover:bg-[#075f60]"
+            to="/espace-membre"
+            className="cta-button bg-primary text-white px-4 py-2 rounded-full font-semibold shadow-lg hover:bg-secondary"
           >
             Espace membre
           </NavLink>
@@ -167,9 +154,9 @@ export default function NavBar() {
               Réserver
             </NavLink>
             <NavLink
-              to="/admin"
+              to="/espace-membre"
               onClick={closeMenu}
-              className="cta-button w-full text-center bg-[#0b7f80] text-white px-4 py-2 rounded-full font-semibold shadow-lg hover:bg-[#075f60]"
+              className="cta-button w-full text-center bg-primary text-white px-4 py-2 rounded-full font-semibold shadow-lg hover:bg-secondary"
             >
               Espace membre
             </NavLink>

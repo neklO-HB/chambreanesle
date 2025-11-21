@@ -9,7 +9,7 @@
   line-height: 1.6;
   font-weight: 400;
   color: #000000;
-  background-color: #009698;
+  background-color: #c45824;
 }
 
 a {
@@ -18,13 +18,13 @@ a {
 }
 
 a:hover {
-  color: #009698;
+  color: #c45824;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #009698;
+  background-color: #c45824;
   color: #000000;
 }
 
@@ -55,7 +55,7 @@ h6 {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #000000, #009698);
+  background: linear-gradient(90deg, #000000, #c45824);
   transition: width 0.3s ease;
 }
 
@@ -102,7 +102,7 @@ h6 {
 }
 
 .hero-bg {
-  background-color: #009698;
+  background-color: #c45824;
   color: #000000;
 }
 
@@ -123,7 +123,7 @@ h6 {
 }
 
 .gradient-text {
-  background: linear-gradient(to right, #009698, #00b8ba);
+  background: linear-gradient(to right, #c45824, #e37a3d);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -154,7 +154,7 @@ h6 {
 }
 
 .button-shadow {
-  box-shadow: 0 10px 20px rgba(0, 150, 152, 0.25);
+  box-shadow: 0 10px 20px rgba(196, 88, 36, 0.25);
 }
 
 .calendar-day {
@@ -162,7 +162,7 @@ h6 {
 }
 
 .calendar-day.available:hover {
-  background-color: #009698;
+  background-color: #c45824;
   color: white;
 }
 
@@ -196,11 +196,11 @@ footer a:hover {
 
 main {
   min-height: 100vh;
-  background-color: #009698;
+  background-color: #c45824;
 }
 
 .section-surface {
-  background-color: #009698;
+  background-color: #c45824;
   color: #000000;
 }
 
@@ -210,8 +210,8 @@ main {
 }
 
 .slider-shell {
-  background: radial-gradient(circle at 20% 20%, rgba(0, 150, 152, 0.25), transparent 45%),
-    radial-gradient(circle at 80% 0%, rgba(0, 0, 0, 0.08), transparent 35%), #009698;
+  background: radial-gradient(circle at 20% 20%, rgba(196, 88, 36, 0.18), transparent 45%),
+    radial-gradient(circle at 80% 0%, rgba(0, 0, 0, 0.08), transparent 35%), #c45824;
 }
 
 .slider-card {

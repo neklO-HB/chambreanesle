@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import NotFound from './pages/NotFound';
@@ -20,7 +20,8 @@ export default function App() {
         <Route path="reserver" element={<ReservationPage />} />
         <Route path="a-propos" element={<AboutPage />} />
         <Route path="contact" element={<ContactPage />} />
-        <Route path="admin" element={<AdminPage />} />
+        <Route path="espace-membre" element={<AdminPage />} />
+        <Route path="admin" element={<Navigate to="/espace-membre" replace />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
