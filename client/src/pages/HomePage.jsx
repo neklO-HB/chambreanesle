@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import BookingForm from '../components/BookingForm';
 import RoomCard from '../components/RoomCard';
 import { getRooms } from '../services/api';
+import HeroSlider from '../components/HeroSlider';
+import { getSections } from '../services/cms';
 
 const features = [
   {
@@ -45,46 +47,33 @@ export default function HomePage() {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [customSections, setCustomSections] = useState([]);
+
+  const featureIntro = customSections.find((section) => section.key === 'features');
+  const bookingIntro = customSections.find((section) => section.key === 'booking');
 
   useEffect(() => {
     getRooms()
       .then(setRooms)
       .catch((err) => setError(err.message || 'Impossible de charger les chambres.'))
       .finally(() => setLoading(false));
+    setCustomSections(getSections('home'));
   }, []);
 
   return (
     <div className="text-black">
-      <section id="home" className="hero-bg py-20 md:py-28">
-        <div className="container mx-auto px-6 text-center max-w-4xl content-card rounded-2xl shadow-lg">
-          <span className="badge bg-white text-primary uppercase tracking-wide mb-4">Maison d'hôtes</span>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">Un havre de paix au cœur de la nature</h1>
-          <p className="text-lg md:text-xl mb-10 text-black">
-            Retrouvez l'ambiance chaleureuse de notre maison familiale à Nesle : trois chambres uniques, un jardin luxuriant et
-            un accueil attentionné.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <a
-              href="/chambres"
-              className="bg-primary text-black font-bold py-3 px-8 rounded-full text-lg transition duration-300 transform hover:scale-105"
-            >
-              Découvrir nos chambres
-            </a>
-            <a
-              href="/reservation"
-              className="bg-white border-2 border-black hover:bg-primary hover:border-primary text-black font-bold py-3 px-8 rounded-full text-lg transition duration-300"
-            >
-              Réserver maintenant
-            </a>
-          </div>
-        </div>
-      </section>
+      <HeroSlider rooms={rooms} />
 
       <section className="py-16 section-surface" id="about">
         <div className="container mx-auto px-6">
           <div className="section-title">
-            <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">Pourquoi choisir Chambre à Nesle ?</h2>
-            <p>Un séjour authentique au milieu des arbres, avec le confort d'un hôtel boutique.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
+              {featureIntro?.title || 'Pourquoi choisir ChambreANesle ?'}
+            </h2>
+            <p>
+              {featureIntro?.content ||
+                "Un séjour authentique à Nesle, dans la Somme : charme d'une maison d'hôtes et services inspirés de l'hôtellerie haut de gamme."}
+            </p>
             <div className="w-20 h-1 bg-primary mx-auto mt-4" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -124,7 +113,7 @@ export default function HomePage() {
         <div className="container mx-auto px-6">
           <div className="section-title">
             <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">Réservez votre séjour</h2>
-            <p>Consultez la disponibilité et réservez en ligne en toute simplicité.</p>
+            <p>{bookingIntro?.content || 'Consultez la disponibilité et réservez en ligne en toute simplicité.'}</p>
             <div className="w-20 h-1 bg-primary mx-auto mt-4" />
           </div>
           <BookingForm rooms={rooms} />

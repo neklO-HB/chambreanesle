@@ -39,13 +39,13 @@ export default function RoomPage() {
       <div className="hero-bg py-16">
         <div className="container mx-auto px-6 flex flex-col md:flex-row items-center gap-8">
           <div className="md:w-1/2 space-y-4">
-            <p className="badge bg-white text-primary inline-flex">Chambre à Nesle</p>
+            <p className="badge bg-white text-primary inline-flex">ChambreANesle</p>
             <h1 className="text-4xl font-bold">{room.name}</h1>
             <p className="text-black text-lg">{room.description}</p>
             <div className="flex items-center gap-4 text-black font-semibold">
               <span className="bg-white px-3 py-1 rounded-full">{room.price}€ / nuit</span>
               <Link
-                to="/reservation"
+                to="/reserver"
                 className="bg-white text-black px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
               >
                 Réserver cette chambre
@@ -98,7 +98,7 @@ export default function RoomPage() {
               </li>
             </ul>
             <Link
-              to="/reservation"
+              to="/reserver"
               className="mt-4 w-full inline-flex justify-center bg-white text-black rounded-lg py-3 font-semibold border border-black transition"
             >
               Demander une réservation

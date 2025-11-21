@@ -14,7 +14,7 @@ export default function ReservationPage() {
       <div className="container mx-auto px-6 max-w-5xl space-y-8">
         <div className="section-title">
           <h1 className="text-4xl font-bold text-black mb-4">Réserver votre séjour</h1>
-          <p>Choisissez vos dates, vos envies et laissez-nous préparer votre arrivée.</p>
+          <p>Choisissez vos dates, vos envies et laissez-nous préparer votre arrivée à Nesle, dans la Somme.</p>
           <div className="w-20 h-1 bg-white mx-auto mt-4" />
         </div>
         <BookingForm rooms={rooms} />
