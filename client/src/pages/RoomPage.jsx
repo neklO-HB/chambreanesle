@@ -29,24 +29,24 @@ export default function RoomPage() {
   if (!room) {
     return (
       <div className="container mx-auto px-6 py-16">
-        <p className="text-center text-gray-600">Chargement de la chambre...</p>
+        <p className="text-center text-black">Chargement de la chambre...</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white">
+    <div className="bg-primary text-black">
       <div className="hero-bg py-16">
         <div className="container mx-auto px-6 flex flex-col md:flex-row items-center gap-8">
           <div className="md:w-1/2 space-y-4">
             <p className="badge bg-white text-primary inline-flex">Chambre à Nesle</p>
             <h1 className="text-4xl font-bold">{room.name}</h1>
-            <p className="text-white/90 text-lg">{room.description}</p>
-            <div className="flex items-center gap-4 text-white font-semibold">
-              <span className="bg-white/20 px-3 py-1 rounded-full">{room.price}€ / nuit</span>
+            <p className="text-black text-lg">{room.description}</p>
+            <div className="flex items-center gap-4 text-black font-semibold">
+              <span className="bg-white px-3 py-1 rounded-full">{room.price}€ / nuit</span>
               <Link
-                to="/#booking"
-                className="bg-white text-primary px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
+                to="/reservation"
+                className="bg-white text-black px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
               >
                 Réserver cette chambre
               </Link>
@@ -60,12 +60,12 @@ export default function RoomPage() {
 
       <div className="container mx-auto px-6 py-16 grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-gray-50 rounded-xl p-6">
-            <h2 className="text-2xl font-bold text-dark mb-3">À propos de la chambre</h2>
-            <p className="text-gray-600">{room.description}</p>
+          <div className="bg-white rounded-xl p-6">
+            <h2 className="text-2xl font-bold text-black mb-3">À propos de la chambre</h2>
+            <p className="text-black">{room.description}</p>
           </div>
-          <div className="bg-gray-50 rounded-xl p-6">
-            <h3 className="text-xl font-bold text-dark mb-4">Équipements</h3>
+          <div className="bg-white rounded-xl p-6">
+            <h3 className="text-xl font-bold text-black mb-4">Équipements</h3>
             <div className="tag-list">
               {room.features.map((feature) => (
                 <span key={feature} className="tag">
@@ -78,11 +78,11 @@ export default function RoomPage() {
 
         <div className="space-y-6">
           <div className="bg-white shadow-lg rounded-xl p-6 border">
-            <h3 className="text-xl font-bold text-dark mb-4">Tarifs et informations</h3>
-            <ul className="space-y-2 text-gray-700">
+            <h3 className="text-xl font-bold text-black mb-4">Tarifs et informations</h3>
+            <ul className="space-y-2 text-black">
               <li className="flex justify-between">
                 <span>Nuitée</span>
-                <span className="font-semibold text-primary">{room.price}€</span>
+                <span className="font-semibold text-black">{room.price}€</span>
               </li>
               <li className="flex justify-between">
                 <span>Petit déjeuner</span>
@@ -98,20 +98,20 @@ export default function RoomPage() {
               </li>
             </ul>
             <Link
-              to="/#booking"
-              className="mt-4 w-full inline-flex justify-center bg-primary text-white rounded-lg py-3 font-semibold hover:bg-secondary transition"
+              to="/reservation"
+              className="mt-4 w-full inline-flex justify-center bg-white text-black rounded-lg py-3 font-semibold border border-black transition"
             >
               Demander une réservation
             </Link>
-            <p className="text-xs text-gray-500 mt-3">Paiement sécurisé, confirmation sous 24h.</p>
+            <p className="text-xs text-black mt-3">Paiement sécurisé, confirmation sous 24h.</p>
           </div>
-          <div className="bg-gray-50 rounded-xl p-6">
-            <h4 className="font-bold text-dark mb-3">Une question ?</h4>
-            <p className="text-gray-600 mb-3">Contactez-nous pour préparer votre arrivée.</p>
-            <a className="block text-primary font-semibold" href="mailto:contact@chambre-nesle.fr">
+          <div className="bg-white rounded-xl p-6">
+            <h4 className="font-bold text-black mb-3">Une question ?</h4>
+            <p className="text-black mb-3">Contactez-nous pour préparer votre arrivée.</p>
+            <a className="block text-black font-semibold" href="mailto:contact@chambre-nesle.fr">
               contact@chambre-nesle.fr
             </a>
-            <a className="block text-primary font-semibold" href="tel:+33123456789">
+            <a className="block text-black font-semibold" href="tel:+33123456789">
               +33 1 23 45 67 89
             </a>
           </div>

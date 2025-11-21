@@ -1,34 +1,32 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+import logo from '../assets/logo.svg';
 
 const navLinks = [
-  { label: 'Accueil', href: '/' },
-  { label: 'Nos chambres', href: '/#rooms' },
-  { label: 'Réservation', href: '/#booking' },
-  { label: 'À propos', href: '/#about' },
-  { label: 'Contact', href: '/#contact' }
+  { label: 'Accueil', to: '/' },
+  { label: 'Nos chambres', to: '/chambres' },
+  { label: 'Réservation', to: '/reservation' },
+  { label: 'À propos', to: '/a-propos' },
+  { label: 'Contact', to: '/contact' }
 ];
 
 export default function NavBar() {
   return (
-    <nav className="bg-white shadow-md py-4 px-6 sticky top-0 z-50">
+    <nav className="bg-primary shadow-md py-4 px-6 sticky top-0 z-50 text-black">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center">
-          <div className="text-primary font-bold text-2xl mr-2">Chambre à Nesle</div>
+          <img src={logo} alt="Logo Chambre à Nesle" className="h-12 w-auto" />
         </Link>
         <div className="hidden md:flex space-x-8 items-center">
           {navLinks.map((link) => (
-            <a key={link.label} href={link.href} className="nav-link text-dark hover:text-primary font-medium">
+            <NavLink key={link.label} to={link.to} className="nav-link text-black font-medium hover:text-black">
               {link.label}
-            </a>
+            </NavLink>
           ))}
-          <a
-            href="/#booking"
-            className="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-secondary transition button-shadow"
-          >
+          <NavLink to="/reservation" className="bg-white text-black px-4 py-2 rounded-lg font-semibold transition">
             Réserver
-          </a>
+          </NavLink>
         </div>
-        <div className="md:hidden text-dark">
+        <div className="md:hidden text-black">
           <i className="fas fa-bed text-xl" aria-hidden />
         </div>
       </div>

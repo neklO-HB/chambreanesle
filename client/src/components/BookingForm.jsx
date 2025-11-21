@@ -66,7 +66,7 @@ export default function BookingForm({ rooms }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
-            <h3 className="text-2xl font-bold text-dark mb-4">Sélectionnez une chambre</h3>
+            <h3 className="text-2xl font-bold text-black mb-4">Sélectionnez une chambre</h3>
             <div className="space-y-3">
               {rooms.map((room) => (
                 <label
@@ -85,22 +85,22 @@ export default function BookingForm({ rooms }) {
                   />
                   <div className="ml-4 flex-1">
                     <div className="flex justify-between">
-                      <span className="font-medium text-dark">{room.name}</span>
-                      <span className="text-primary font-medium">{room.price}€/nuit</span>
+                      <span className="font-medium text-black">{room.name}</span>
+                      <span className="text-black font-medium">{room.price}€/nuit</span>
                     </div>
-                    <p className="text-sm text-gray-600 mt-1">{room.highlight || room.description}</p>
+                    <p className="text-sm text-black mt-1">{room.highlight || room.description}</p>
                   </div>
                 </label>
               ))}
-              {!rooms.length && <p className="text-gray-600">Les chambres sont en cours de chargement...</p>}
+              {!rooms.length && <p className="text-black">Les chambres sont en cours de chargement...</p>}
             </div>
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-dark">Informations de réservation</h3>
+            <h3 className="text-2xl font-bold text-black">Informations de réservation</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-700 mb-2">Arrivée</label>
+                <label className="block text-black mb-2">Arrivée</label>
                 <input
                   type="date"
                   required
@@ -110,7 +110,7 @@ export default function BookingForm({ rooms }) {
                 />
               </div>
               <div>
-                <label className="block text-gray-700 mb-2">Départ</label>
+                <label className="block text-black mb-2">Départ</label>
                 <input
                   type="date"
                   required
@@ -121,7 +121,7 @@ export default function BookingForm({ rooms }) {
               </div>
             </div>
             <div>
-              <label className="block text-gray-700 mb-2">Nombre de personnes</label>
+              <label className="block text-black mb-2">Nombre de personnes</label>
               <select
                 value={guests}
                 onChange={(e) => setGuests(Number(e.target.value))}
@@ -135,7 +135,7 @@ export default function BookingForm({ rooms }) {
               </select>
             </div>
             <div>
-              <label className="block text-gray-700 mb-2">Services supplémentaires</label>
+              <label className="block text-black mb-2">Services supplémentaires</label>
               <div className="space-y-2">
                 {extrasList.map((extra) => (
                   <label key={extra.key} className="flex items-center">
@@ -145,7 +145,7 @@ export default function BookingForm({ rooms }) {
                       onChange={() => toggleExtra(extra.key)}
                       className="h-4 w-4 text-primary focus:ring-primary"
                     />
-                    <span className="ml-2 text-gray-700">{extra.label}</span>
+                    <span className="ml-2 text-black">{extra.label}</span>
                   </label>
                 ))}
               </div>
@@ -156,14 +156,14 @@ export default function BookingForm({ rooms }) {
             <button
               type="submit"
               disabled={status.type === 'loading' || !roomSlug}
-              className="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg transition duration-300 flex items-center justify-center disabled:opacity-70"
+              className="w-full bg-primary hover:bg-secondary text-black py-3 rounded-lg transition duration-300 flex items-center justify-center disabled:opacity-70"
             >
               {status.type === 'loading' ? 'Envoi en cours...' : 'Valider la réservation'}
             </button>
             {status.type !== 'idle' && (
               <p
                 className={`mt-3 text-sm ${
-                  status.type === 'success' ? 'text-green-700' : status.type === 'error' ? 'text-red-600' : 'text-gray-600'
+                  status.type === 'success' ? 'text-green-700' : status.type === 'error' ? 'text-red-600' : 'text-black'
                 }`}
               >
                 {status.message}
@@ -173,25 +173,25 @@ export default function BookingForm({ rooms }) {
         </form>
 
         <div className="space-y-6">
-          <h3 className="text-2xl font-bold text-dark">Récapitulatif</h3>
+          <h3 className="text-2xl font-bold text-black">Récapitulatif</h3>
           <div className="bg-gray-50 rounded-lg p-6 space-y-3">
             {selectedRoom ? (
               <>
                 <div className="flex justify-between">
                   <span>{selectedRoom.name}</span>
-                  <span className="font-semibold text-primary">{selectedRoom.price}€ / nuit</span>
+                  <span className="font-semibold text-black">{selectedRoom.price}€ / nuit</span>
                 </div>
-                <div className="flex justify-between text-sm text-gray-600">
+                <div className="flex justify-between text-sm text-black">
                   <span>Dates</span>
                   <span>
                     {startDate || 'Arrivée'} → {endDate || 'Départ'}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm text-gray-600">
+                <div className="flex justify-between text-sm text-black">
                   <span>Voyageurs</span>
                   <span>{guests}</span>
                 </div>
-                <div className="flex justify-between text-sm text-gray-600">
+                <div className="flex justify-between text-sm text-black">
                   <span>Services</span>
                   <span>{extrasCount || 'Aucun'}</span>
                 </div>
@@ -217,7 +217,7 @@ export default function BookingForm({ rooms }) {
                 )}
               </>
             ) : (
-              <p className="text-gray-600">Sélectionnez une chambre pour obtenir un devis détaillé.</p>
+              <p className="text-black">Sélectionnez une chambre pour obtenir un devis détaillé.</p>
             )}
           </div>
         </div>

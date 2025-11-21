@@ -4,8 +4,8 @@
   font-family: 'Poppins', sans-serif;
   line-height: 1.6;
   font-weight: 400;
-  color: #2d3748;
-  background-color: #f8f9fa;
+  color: #000000;
+  background-color: #009698;
 }
 
 a {
@@ -20,7 +20,8 @@ a:hover {
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #009698;
+  color: #000000;
 }
 
 h1,
@@ -34,11 +35,8 @@ h6 {
 }
 
 .hero-bg {
-  background: linear-gradient(135deg, rgba(0, 150, 152, 0.8) 0%, rgba(0, 122, 124, 0.9) 100%),
-    url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80');
-  background-size: cover;
-  background-position: center;
-  color: white;
+  background-color: #009698;
+  color: #000000;
 }
 
 .room-card,
@@ -91,13 +89,13 @@ h6 {
 
 .section-title h2 {
   font-size: clamp(2rem, 4vw, 2.6rem);
-  color: #1f2937;
+  color: #000000;
 }
 
 .section-title p {
   max-width: 640px;
   margin: 0 auto;
-  color: #4b5563;
+  color: #000000;
 }
 
 .badge {
@@ -152,5 +150,15 @@ footer a:hover {
 
 main {
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #009698;
+}
+
+.section-surface {
+  background-color: #009698;
+  color: #000000;
+}
+
+.content-card {
+  background-color: #ffffff;
+  color: #000000;
 }
