@@ -2,19 +2,46 @@ import express from 'express';
 import cors from 'cors';
 import sqlite3 from 'sqlite3';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const dbPath = path.join(__dirname, '..', 'data', 'chambreanesle.db');
+const dataDir = path.join(__dirname, '..', 'data');
+const dbPath = path.join(dataDir, 'chambreanesle.db');
+
+fs.mkdirSync(dataDir, { recursive: true });
 
 const app = express();
-const db = new sqlite3.Database(dbPath);
+const db = new sqlite3.Database(dbPath, (err) => {
+  if (err) {
+    console.error('Erreur lors de l\'ouverture de la base de données.', err);
+    process.exit(1);
+  }
+});
 const clientDistPath = path.join(__dirname, '..', '..', 'client', 'dist');
+
+db.get("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'rooms'", (err, row) => {
+  if (err) {
+    console.error('Erreur lors de la vérification de la base de données.', err);
+    return;
+  }
+
+  if (!row) {
+    console.warn('Base de données vide détectée. Exécutez "npm run initdb" pour initialiser les données.');
+  }
+});
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(clientDistPath));
+
+const buildDbErrorMessage = (err, defaultMessage) => {
+  if (err?.message?.includes('no such table')) {
+    return 'Base de données non initialisée. Exécutez "npm run initdb" pour préparer les tables.';
+  }
+  return defaultMessage;
+};
 
 const mapRoom = (row) => ({
   id: row.id,
@@ -31,7 +58,7 @@ app.get('/api/rooms', (req, res) => {
   db.all('SELECT * FROM rooms ORDER BY price DESC', (err, rows) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Impossible de récupérer les chambres' });
+      return res.status(500).json({ error: buildDbErrorMessage(err, 'Impossible de récupérer les chambres') });
     }
     res.json(rows.map(mapRoom));
   });
@@ -42,7 +69,7 @@ app.get('/api/rooms/:slug', (req, res) => {
   db.get('SELECT * FROM rooms WHERE slug = ?', [slug], (err, row) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Impossible de récupérer la chambre' });
+      return res.status(500).json({ error: buildDbErrorMessage(err, 'Impossible de récupérer la chambre') });
     }
     if (!row) {
       return res.status(404).json({ error: 'Chambre introuvable' });
@@ -62,7 +89,7 @@ app.get('/api/bookings', (req, res) => {
   db.all(query, (err, rows) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Impossible de récupérer les réservations' });
+      return res.status(500).json({ error: buildDbErrorMessage(err, 'Impossible de récupérer les réservations') });
     }
 
     const bookings = rows.map((row) => ({
@@ -91,7 +118,7 @@ app.post('/api/bookings', (req, res) => {
   db.get('SELECT id FROM rooms WHERE slug = ?', [roomSlug], (roomErr, room) => {
     if (roomErr) {
       console.error(roomErr);
-      return res.status(500).json({ error: 'Erreur lors de la vérification de la chambre' });
+      return res.status(500).json({ error: buildDbErrorMessage(roomErr, 'Erreur lors de la vérification de la chambre') });
     }
 
     if (!room) {
@@ -104,7 +131,7 @@ app.post('/api/bookings', (req, res) => {
     db.run(insertQuery, [room.id, startDate, endDate, guests, JSON.stringify(extras)], function (err) {
       if (err) {
         console.error(err);
-        return res.status(500).json({ error: 'Impossible de créer la réservation' });
+        return res.status(500).json({ error: buildDbErrorMessage(err, 'Impossible de créer la réservation') });
       }
 
       res.status(201).json({
