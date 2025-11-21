@@ -108,23 +108,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 section-surface" id="booking">
+      <section
+        className="py-20 section-surface"
+        id="booking"
+        style={{
+          backgroundImage:
+            'linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.35)), url(https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=80)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
         <div className="container mx-auto px-6">
-          <div className="section-title">
-            <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">Réservez votre séjour</h2>
-            <p>
+          <div className="max-w-3xl mx-auto text-center bg-white/80 backdrop-blur rounded-3xl p-10 shadow-2xl border border-black/10">
+            <p className="uppercase tracking-[0.2em] text-xs font-semibold mb-3 text-black/70">Réservez votre séjour</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">Escapade à Nesle, sur-mesure</h2>
+            <p className="text-black/80">
               {bookingIntro?.content ||
-                'Choisissez vos dates en un clic et accédez au planning complet sur la page réservation.'}
+                'Choisissez vos dates en un clic, ajoutez vos options et recevez votre récapitulatif directement dans votre espace membre.'}
             </p>
-            <div className="w-20 h-1 bg-primary mx-auto mt-4" />
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
+            <div className="w-24 h-[3px] bg-black mx-auto mt-6" />
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
               <a
                 href="/reserver"
                 className="cta-button bg-black text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-[#2B2B2B]"
               >
                 Accéder aux disponibilités
               </a>
-              <p className="text-sm text-black/70">Arrivées dès 17h30 · Départs jusqu'à 11h30</p>
+              <p className="text-sm text-black">Arrivée 17h30 · Départ 11h30 · Annulation flexible</p>
             </div>
           </div>
         </div>

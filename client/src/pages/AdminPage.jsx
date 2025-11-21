@@ -1,5 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getBookings, getStripeSettings, rooms as roomOptions, saveStripeSettings } from '../services/api';
+import {
+  generateICal,
+  getBookings,
+  getCalendarSync,
+  getStripeSettings,
+  rooms as roomOptions,
+  saveCalendarSync,
+  saveStripeSettings
+} from '../services/api';
 import { addMember, deleteMember, getMembers, getSections, upsertSection } from '../services/cms';
 import { addRoomPhoto, getAllGalleriesSnapshot, removeRoomPhoto } from '../services/gallery';
 
@@ -28,6 +36,7 @@ export default function AdminPage() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [stripeConfig, setStripeConfig] = useState(getStripeSettings());
+  const [calendarSync, setCalendarSync] = useState(getCalendarSync());
   const [galleries, setGalleries] = useState(getAllGalleriesSnapshot());
   const [selectedGalleryRoom, setSelectedGalleryRoom] = useState(roomOptions[0]?.slug || '');
   const [photoCaption, setPhotoCaption] = useState('');
@@ -132,6 +141,28 @@ export default function AdminPage() {
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
     setToken('');
+  };
+
+  const downloadInvoice = (booking) => {
+    if (!booking) return;
+    const nights = Math.max(
+      1,
+      (new Date(booking.endDate) - new Date(booking.startDate)) / (1000 * 60 * 60 * 24)
+    );
+    const totalNights = nights * (booking.price || booking.roomPrice || 0);
+    const extras = booking.extras?.join(', ') || 'Aucun';
+    const content = `Facture ChambreANesle\n\nClient : ${booking.contact?.fullName || ''}\nSociété : ${
+      booking.contact?.company || '—'
+    }\nEmail : ${booking.contact?.email || ''}\nTéléphone : ${booking.contact?.phone || ''}\n\nSéjour : ${
+      booking.roomName
+    } du ${booking.startDate} au ${booking.endDate}\nNombre de nuits : ${nights}\nExtras : ${extras}\nSIRET : 90182787300018\nTotal estimatif : ${totalNights}€`; 
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `facture-${booking.reservationNumber || booking.id}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   if (!token) {
@@ -308,6 +339,42 @@ export default function AdminPage() {
 
         {activeTab === 'bookings' && (
           <div className="bg-white rounded-xl p-6 shadow-sm border border-black/5">
+            <div className="grid md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-primary/10 rounded-lg p-4 border border-black/10">
+                <h3 className="font-bold mb-2">Synchronisation Airbnb (iCal)</h3>
+                <p className="text-sm text-black/70 mb-3">Collez le lien iCal Airbnb pour la chambre sélectionnée.</p>
+                <select
+                  className="w-full border border-black/10 rounded-lg px-3 py-2 mb-3"
+                  value={selectedGalleryRoom}
+                  onChange={(e) => setSelectedGalleryRoom(e.target.value)}
+                >
+                  {roomOptions.map((room) => (
+                    <option key={room.slug} value={room.slug}>
+                      {room.name}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  className="w-full border border-black/10 rounded-lg px-3 py-2 mb-2"
+                  placeholder="Lien iCal Airbnb"
+                  value={calendarSync[selectedGalleryRoom]?.airbnbUrl || ''}
+                  onChange={(e) =>
+                    setCalendarSync(saveCalendarSync(selectedGalleryRoom, e.target.value))
+                  }
+                />
+                <p className="text-xs text-black/60">Les nouvelles réservations seront ajoutées à votre export iCal interne.</p>
+              </div>
+
+              <div className="bg-primary/10 rounded-lg p-4 border border-black/10">
+                <h3 className="font-bold mb-2">iCal ChambreANesle</h3>
+                <p className="text-sm text-black/70">Copiez ce flux et importez-le dans vos calendriers.</p>
+                <textarea
+                  className="w-full border border-black/10 rounded-lg px-3 py-2 text-xs h-32"
+                  readOnly
+                  value={generateICal(selectedGalleryRoom)}
+                />
+              </div>
+            </div>
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-sm uppercase tracking-widest text-black/60">Réservations</p>
@@ -325,6 +392,18 @@ export default function AdminPage() {
                   {!!booking.extras?.length && (
                     <p className="text-xs text-black/60">Extras : {booking.extras.join(', ')}</p>
                   )}
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    <span className="text-xs bg-white border border-black/10 rounded-full px-3 py-1">{booking.status}</span>
+                    {booking.status === 'payée' && (
+                      <button
+                        type="button"
+                        className="text-xs bg-black text-white rounded-full px-3 py-1"
+                        onClick={() => downloadInvoice(booking)}
+                      >
+                        Générer la facture
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
               {!bookings.length && <p className="text-black/70">Aucune réservation pour le moment.</p>}
@@ -453,9 +532,6 @@ export default function AdminPage() {
                 Sauvegarder les paramètres
               </button>
             </form>
-            <p className="text-sm text-black/60 mt-3">
-              Les confirmations de réservation sont envoyées à chambreanesle@gmail.com et dylanmonard80700@gmail.com.
-            </p>
           </div>
         )}
 

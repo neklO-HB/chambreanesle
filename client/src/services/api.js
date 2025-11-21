@@ -2,6 +2,7 @@ import { findRoom, rooms } from '../data/rooms';
 
 const BOOKING_KEY = 'chambreanesle_bookings';
 const STRIPE_SETTINGS_KEY = 'stripe_settings';
+const CALENDAR_SYNC_KEY = 'calendar_sync_urls';
 const BOOKING_NOTIFICATIONS = ['chambreanesle@gmail.com', 'dylanmonard80700@gmail.com'];
 const CONTACT_EMAIL = 'dupuisbrian80@outlook.fr';
 const CONTACT_PHONE = '0648939733';
@@ -74,6 +75,23 @@ const saveBookings = (bookings) => {
   return bookings;
 };
 
+const getCalendarSyncMap = () => {
+  if (!hasWindow()) return {};
+  return parseJson(localStorage.getItem(CALENDAR_SYNC_KEY), {});
+};
+
+export function saveCalendarSync(roomSlug, airbnbUrl) {
+  if (!hasWindow()) return {};
+  const current = getCalendarSyncMap();
+  const updated = { ...current, [roomSlug]: { airbnbUrl } };
+  localStorage.setItem(CALENDAR_SYNC_KEY, JSON.stringify(updated));
+  return updated;
+}
+
+export function getCalendarSync() {
+  return getCalendarSyncMap();
+}
+
 export async function getRooms() {
   return rooms;
 }
@@ -135,6 +153,7 @@ export async function createBooking(payload) {
     roomId: room.id,
     roomSlug,
     roomName: room.name,
+    roomPrice: room.price,
     startDate,
     endDate,
     guests,
@@ -147,7 +166,8 @@ export async function createBooking(payload) {
     contact: {
       fullName: contact?.fullName || 'Client ChambreANesle',
       email: contact?.email || CONTACT_EMAIL,
-      phone: contact?.phone || CONTACT_PHONE
+      phone: contact?.phone || CONTACT_PHONE,
+      company: contact?.company || ''
     },
     notifications: BOOKING_NOTIFICATIONS
   };
@@ -187,6 +207,21 @@ export function getContactDetails() {
     email: CONTACT_EMAIL,
     notificationEmails: BOOKING_NOTIFICATIONS
   };
+}
+
+export function generateICal(roomSlug) {
+  const entries = getStoredBookings().filter((booking) => booking.roomSlug === roomSlug);
+  const formatDate = (date) => date.replaceAll('-', '') + 'T120000Z';
+  const body = entries
+    .map(
+      (booking) =>
+        `BEGIN:VEVENT\nUID:${booking.id}@chambreanesle\nSUMMARY:${booking.roomName}\nDTSTART:${formatDate(
+          booking.startDate
+        )}\nDTEND:${formatDate(booking.endDate)}\nEND:VEVENT`
+    )
+    .join('\n');
+
+  return `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//ChambreANesle//Planning//FR\n${body}\nEND:VCALENDAR`;
 }
 
 export { rooms };
