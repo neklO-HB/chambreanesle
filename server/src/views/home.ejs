@@ -1,0 +1,91 @@
+<%- include('partials/header', { title }) %>
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <p class="eyebrow">Maison d'hôtes - Vallée de la Somme</p>
+      <h1>Un havre de paix à deux pas d'Anesle</h1>
+      <p class="lead">
+        Profitez de chambres chaleureuses, d’un jardin arboré et d’une cuisine maison. Réservez
+        facilement votre séjour et rejoignez l’espace membre pour suivre vos réservations.
+      </p>
+      <div class="cta">
+        <a href="/reservation" class="button">Réserver maintenant</a>
+        <a href="/chambres" class="button ghost">Découvrir les chambres</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <h3>Horaires & infos</h3>
+      <ul>
+        <li>Arrivées : 16h - 20h</li>
+        <li>Départs : jusqu'à 11h</li>
+        <li>Petit déjeuner maison inclus</li>
+        <li>Parking gratuit & wifi haut débit</li>
+      </ul>
+      <a class="button full" href="tel:+33300000000">Réserver par téléphone</a>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Nos chambres</p>
+      <h2>Confort & authenticité</h2>
+      <p>Des suites lumineuses imaginées pour les couples comme pour les familles.</p>
+    </div>
+    <a href="/chambres" class="button ghost">Voir toutes les chambres</a>
+  </div>
+  <div class="card-grid">
+    <% rooms.forEach((room) => { %>
+    <article class="card">
+      <img src="<%= room.image %>" alt="<%= room.name %>" loading="lazy" />
+      <div class="card-body">
+        <div class="card-head">
+          <h3><%= room.name %></h3>
+          <p class="price"><%= formatPrice(room.price) %> / nuit</p>
+        </div>
+        <p><%= room.description %></p>
+        <% if (room.features.length) { %>
+        <ul class="tags">
+          <% room.features.forEach((feature) => { %>
+          <li><%= feature %></li>
+          <% }) %>
+        </ul>
+        <% } %>
+        <div class="card-actions">
+          <a href="/chambres/<%= room.slug %>" class="button ghost">Détails</a>
+          <a href="/reservation?roomSlug=<%= room.slug %>" class="button">Réserver</a>
+        </div>
+      </div>
+    </article>
+    <% }) %>
+  </div>
+</section>
+
+<section class="container section split">
+  <div>
+    <p class="eyebrow">Espace membre</p>
+    <h2>Consultez vos réservations à tout moment</h2>
+    <p>
+      Plus besoin d’une application externe : l’espace membre intégré affiche toutes vos réservations
+      validées, vos dates d’arrivée et les options sélectionnées.
+    </p>
+    <a href="/espace-membre" class="button">Accéder à l'espace membre</a>
+  </div>
+  <div class="panel">
+    <p class="muted">Aperçu</p>
+    <ul class="booking-list">
+      <% rooms.slice(0, 2).forEach((room) => { %>
+      <li>
+        <strong><%= room.name %></strong>
+        <span>Prochaine dispo : contactez-nous</span>
+      </li>
+      <% }) %>
+      <li>
+        <strong>Support dédié</strong>
+        <span>Réponse rapide par mail ou téléphone</span>
+      </li>
+    </ul>
+  </div>
+</section>
+<%- include('partials/footer') %>

@@ -1,0 +1,46 @@
+<%- include('partials/header', { title }) %>
+<section class="container section">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Espace membre</p>
+      <h1>Suivi des réservations</h1>
+      <p class="muted">Retrouvez toutes les demandes enregistrées et les options choisies.</p>
+    </div>
+    <a href="/reservation" class="button">Nouvelle réservation</a>
+  </div>
+
+  <div class="table">
+    <div class="table-row head">
+      <div>Chambre</div>
+      <div>Arrivée</div>
+      <div>Départ</div>
+      <div>Voyageurs</div>
+      <div>Options</div>
+    </div>
+    <% if (!bookings.length) { %>
+    <div class="table-row">
+      <div colspan="5">Aucune réservation pour le moment.</div>
+    </div>
+    <% } %>
+    <% bookings.forEach((booking) => { %>
+    <div class="table-row">
+      <div><strong><%= booking.roomName %></strong></div>
+      <div><%= formatDate(booking.startDate) %></div>
+      <div><%= formatDate(booking.endDate) %></div>
+      <div><%= booking.guests %> pers.</div>
+      <div>
+        <% if (!booking.extras.length) { %>
+        <span class="muted">Aucune option</span>
+        <% } else { %>
+        <ul class="tags inline">
+          <% booking.extras.forEach((extra) => { %>
+          <li><%= extra %></li>
+          <% }) %>
+        </ul>
+        <% } %>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</section>
+<%- include('partials/footer') %>

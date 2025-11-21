@@ -15,26 +15,21 @@ fs.mkdirSync(dataDir, { recursive: true });
 const app = express();
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
-    console.error('Erreur lors de l\'ouverture de la base de données.', err);
+    console.error("Erreur lors de l'ouverture de la base de données.", err);
     process.exit(1);
   }
 });
-const clientDistPath = path.join(__dirname, '..', '..', 'client', 'dist');
 
-db.get("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'rooms'", (err, row) => {
-  if (err) {
-    console.error('Erreur lors de la vérification de la base de données.', err);
-    return;
-  }
+const viewsPath = path.join(__dirname, 'views');
+const publicPath = path.join(__dirname, '..', 'public');
 
-  if (!row) {
-    console.warn('Base de données vide détectée. Exécutez "npm run initdb" pour initialiser les données.');
-  }
-});
+app.set('views', viewsPath);
+app.set('view engine', 'ejs');
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(clientDistPath));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(publicPath));
 
 const buildDbErrorMessage = (err, defaultMessage) => {
   if (err?.message?.includes('no such table')) {
@@ -54,112 +49,232 @@ const mapRoom = (row) => ({
   highlight: row.highlight || ''
 });
 
-app.get('/api/rooms', (req, res) => {
-  db.all('SELECT * FROM rooms ORDER BY price DESC', (err, rows) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: buildDbErrorMessage(err, 'Impossible de récupérer les chambres') });
-    }
-    res.json(rows.map(mapRoom));
-  });
+const mapBooking = (row) => ({
+  id: row.id,
+  roomId: row.room_id,
+  roomName: row.roomName ?? row.name,
+  roomSlug: row.roomSlug ?? row.slug,
+  startDate: row.start_date,
+  endDate: row.end_date,
+  guests: row.guests,
+  extras: JSON.parse(row.extras || '[]'),
+  createdAt: row.created_at
 });
 
-app.get('/api/rooms/:slug', (req, res) => {
-  const { slug } = req.params;
-  db.get('SELECT * FROM rooms WHERE slug = ?', [slug], (err, row) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: buildDbErrorMessage(err, 'Impossible de récupérer la chambre') });
-    }
-    if (!row) {
-      return res.status(404).json({ error: 'Chambre introuvable' });
-    }
-    res.json(mapRoom(row));
+const queryAll = (sql, params = []) =>
+  new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) return reject(err);
+      resolve(rows);
+    });
   });
-});
 
-app.get('/api/bookings', (req, res) => {
-  const query = `
-    SELECT bookings.*, rooms.name as roomName, rooms.slug as roomSlug
-    FROM bookings
-    JOIN rooms ON rooms.id = bookings.room_id
-    ORDER BY date(start_date) ASC
-  `;
-
-  db.all(query, (err, rows) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: buildDbErrorMessage(err, 'Impossible de récupérer les réservations') });
-    }
-
-    const bookings = rows.map((row) => ({
-      id: row.id,
-      roomId: row.room_id,
-      roomName: row.roomName,
-      roomSlug: row.roomSlug,
-      startDate: row.start_date,
-      endDate: row.end_date,
-      guests: row.guests,
-      extras: JSON.parse(row.extras || '[]'),
-      createdAt: row.created_at
-    }));
-
-    res.json(bookings);
+const queryGet = (sql, params = []) =>
+  new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) return reject(err);
+      resolve(row);
+    });
   });
-});
 
-app.post('/api/bookings', (req, res) => {
-  const { roomSlug, startDate, endDate, guests = 1, extras = [] } = req.body;
+const runStatement = (sql, params = []) =>
+  new Promise((resolve, reject) => {
+    db.run(sql, params, function runCallback(err) {
+      if (err) return reject(err);
+      resolve(this);
+    });
+  });
 
-  if (!roomSlug || !startDate || !endDate) {
-    return res.status(400).json({ error: 'Les champs roomSlug, startDate et endDate sont obligatoires.' });
+const formatPrice = (value) =>
+  new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value);
+
+const formatDate = (value) => {
+  if (!value) return '';
+  const date = new Date(value);
+  return new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium' }).format(date);
+};
+
+const renderError = (res, error, status = 500) => {
+  res.status(status).render('error', { title: 'Oups...', message: error });
+};
+
+const fetchRooms = async () => {
+  const rows = await queryAll('SELECT * FROM rooms ORDER BY price DESC');
+  return rows.map(mapRoom);
+};
+
+const fetchRoomBySlug = async (slug) => {
+  const row = await queryGet('SELECT * FROM rooms WHERE slug = ?', [slug]);
+  return row ? mapRoom(row) : null;
+};
+
+const fetchBookingsWithRooms = async () => {
+  const rows = await queryAll(
+    `SELECT bookings.*, rooms.name, rooms.slug
+     FROM bookings
+     JOIN rooms ON rooms.id = bookings.room_id
+     ORDER BY date(start_date) ASC`
+  );
+  return rows.map(mapBooking);
+};
+
+app.get('/', async (_req, res) => {
+  try {
+    const rooms = await fetchRooms();
+    res.render('home', { title: 'Maison d’hôtes près d’Anesle', rooms, formatPrice });
+  } catch (error) {
+    console.error(error);
+    renderError(res, buildDbErrorMessage(error, 'Impossible de charger les chambres.'));
   }
+});
 
-  db.get('SELECT id FROM rooms WHERE slug = ?', [roomSlug], (roomErr, room) => {
-    if (roomErr) {
-      console.error(roomErr);
-      return res.status(500).json({ error: buildDbErrorMessage(roomErr, 'Erreur lors de la vérification de la chambre') });
+app.get('/chambres', async (_req, res) => {
+  try {
+    const rooms = await fetchRooms();
+    res.render('rooms', { title: 'Chambres & suites', rooms, formatPrice });
+  } catch (error) {
+    console.error(error);
+    renderError(res, buildDbErrorMessage(error, 'Impossible de charger les chambres.'));
+  }
+});
+
+app.get('/chambres/:slug', async (req, res) => {
+  try {
+    const room = await fetchRoomBySlug(req.params.slug);
+    if (!room) {
+      return renderError(res, 'Chambre introuvable', 404);
+    }
+
+    const bookings = await queryAll(
+      `SELECT bookings.* FROM bookings
+       JOIN rooms ON rooms.id = bookings.room_id
+       WHERE rooms.slug = ?
+       ORDER BY date(start_date) ASC`,
+      [req.params.slug]
+    );
+
+    res.render('room', {
+      title: room.name,
+      room,
+      formatPrice,
+      formatDate,
+      bookings: bookings.map(mapBooking)
+    });
+  } catch (error) {
+    console.error(error);
+    renderError(res, buildDbErrorMessage(error, 'Impossible de charger la chambre.'));
+  }
+});
+
+app.get('/reservation', async (req, res) => {
+  try {
+    const rooms = await fetchRooms();
+    const selectedSlug = req.query.roomSlug;
+    res.render('reservation', {
+      title: 'Réserver',
+      rooms,
+      formatPrice,
+      errors: [],
+      form: { roomSlug: selectedSlug ?? rooms[0]?.slug ?? '', startDate: '', endDate: '', guests: 2, extras: [] }
+    });
+  } catch (error) {
+    console.error(error);
+    renderError(res, buildDbErrorMessage(error, 'Impossible de charger le formulaire de réservation.'));
+  }
+});
+
+app.post('/reservation', async (req, res) => {
+  const { roomSlug, startDate, endDate, guests, extras = [] } = req.body;
+  const normalizedExtras = Array.isArray(extras) ? extras : [extras].filter(Boolean);
+  const errors = [];
+
+  try {
+    const rooms = await fetchRooms();
+    const room = rooms.find((item) => item.slug === roomSlug);
+
+    if (!roomSlug || !startDate || !endDate) {
+      errors.push('Merci de renseigner la chambre, la date d’arrivée et la date de départ.');
     }
 
     if (!room) {
-      return res.status(404).json({ error: 'Chambre introuvable' });
+      errors.push('La chambre sélectionnée est introuvable.');
+    }
+
+    const guestsNumber = Number.parseInt(guests || '1', 10);
+    if (!Number.isFinite(guestsNumber) || guestsNumber < 1) {
+      errors.push('Le nombre de voyageurs doit être au minimum de 1 personne.');
+    }
+
+    if (errors.length > 0) {
+      return res.status(400).render('reservation', {
+        title: 'Réserver',
+        rooms,
+        formatPrice,
+        errors,
+        form: { roomSlug, startDate, endDate, guests: guestsNumber || 1, extras: normalizedExtras }
+      });
     }
 
     const insertQuery =
       'INSERT INTO bookings (room_id, start_date, end_date, guests, extras) VALUES (?, ?, ?, ?, ?)';
 
-    db.run(insertQuery, [room.id, startDate, endDate, guests, JSON.stringify(extras)], function (err) {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ error: buildDbErrorMessage(err, 'Impossible de créer la réservation') });
-      }
+    const result = await runStatement(insertQuery, [
+      room.id,
+      startDate,
+      endDate,
+      guestsNumber,
+      JSON.stringify(normalizedExtras)
+    ]);
 
-      res.status(201).json({
-        id: this.lastID,
-        roomId: room.id,
-        roomSlug,
+    res.status(201).render('reservation-success', {
+      title: 'Réservation confirmée',
+      booking: {
+        id: result.lastID,
+        room,
         startDate,
         endDate,
-        guests,
-        extras
-      });
+        guests: guestsNumber,
+        extras: normalizedExtras
+      },
+      formatDate,
+      formatPrice
     });
-  });
+  } catch (error) {
+    console.error(error);
+    renderError(res, buildDbErrorMessage(error, "Impossible d'enregistrer la réservation."));
+  }
+});
+
+app.get('/a-propos', (_req, res) => {
+  res.render('about', { title: 'À propos de la maison' });
+});
+
+app.get('/contact', (_req, res) => {
+  res.render('contact', { title: 'Contact' });
+});
+
+app.get('/espace-membre', async (_req, res) => {
+  try {
+    const bookings = await fetchBookingsWithRooms();
+    res.render('admin', { title: 'Espace membre', bookings, formatDate, formatPrice });
+  } catch (error) {
+    console.error(error);
+    renderError(res, buildDbErrorMessage(error, "Impossible d'accéder à l'espace membre."));
+  }
 });
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.get('*', (req, res) => {
+app.use((req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ error: 'Endpoint introuvable' });
   }
-
-  res.sendFile(path.join(clientDistPath, 'index.html'));
+  return renderError(res, 'Page introuvable', 404);
 });
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`API prête sur http://localhost:${PORT}`);
+  console.log(`Site prêt sur http://localhost:${PORT}`);
 });
