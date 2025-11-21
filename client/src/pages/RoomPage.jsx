@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getRoom } from '../services/api';
+import { generateICal, getCalendarSync, getRoom } from '../services/api';
 import { getRoomGallery } from '../services/gallery';
 
 export default function RoomPage() {
@@ -8,13 +8,28 @@ export default function RoomPage() {
   const [room, setRoom] = useState(null);
   const [error, setError] = useState('');
   const [gallery, setGallery] = useState([]);
+  const [calendarText, setCalendarText] = useState('');
+  const [airbnbLink, setAirbnbLink] = useState('');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     getRoom(slug)
       .then(setRoom)
       .catch((err) => setError(err.message || 'Chambre introuvable.'));
     setGallery(getRoomGallery(slug));
+    setCalendarText(generateICal(slug));
+    setAirbnbLink(getCalendarSync()[slug]?.airbnbUrl || '');
   }, [slug]);
+
+  const handleCopyCalendar = async () => {
+    try {
+      await navigator.clipboard.writeText(calendarText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (err) {
+      setCopied(false);
+    }
+  };
 
   if (error) {
     return (
@@ -22,7 +37,7 @@ export default function RoomPage() {
         <div className="bg-white rounded-xl shadow-lg p-8 text-center">
           <p className="text-red-600 mb-4">{error}</p>
           <Link className="text-primary font-semibold" to="/">
-            Retourner à l'accueil
+            Retourner à l’accueil
           </Link>
         </div>
       </div>
@@ -120,6 +135,35 @@ export default function RoomPage() {
               Demander une réservation
             </Link>
             <p className="text-xs text-black mt-3">Paiement sécurisé, confirmation sous 24h.</p>
+          </div>
+          <div className="bg-white shadow-lg rounded-xl p-6 border">
+            <h4 className="font-bold text-black mb-3">Synchroniser cette chambre</h4>
+            <p className="text-black/70 text-sm mb-3">
+              Copiez le flux iCal de {room.name} pour l’importer dans vos calendriers ou sur Airbnb.
+            </p>
+            <textarea
+              className="w-full border border-black/10 rounded-lg px-3 py-2 text-xs h-28"
+              readOnly
+              value={calendarText}
+            />
+            <div className="flex items-center gap-3 mt-2">
+              <button
+                type="button"
+                onClick={handleCopyCalendar}
+                className="bg-black text-white rounded-full px-4 py-2 text-sm"
+              >
+                Copier le flux iCal
+              </button>
+              {copied && <span className="text-sm text-green-700">Copié !</span>}
+            </div>
+            {airbnbLink && (
+              <p className="text-xs text-black/60 mt-3 break-all">
+                Lien Airbnb enregistré :{' '}
+                <a className="font-semibold text-primary" href={airbnbLink} target="_blank" rel="noreferrer">
+                  {airbnbLink}
+                </a>
+              </p>
+            )}
           </div>
           <div className="bg-white rounded-xl p-6">
             <h4 className="font-bold text-black mb-3">Une question ?</h4>
