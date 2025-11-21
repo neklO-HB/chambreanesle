@@ -25,8 +25,11 @@ export default function AboutPage() {
     <div className="section-surface min-h-screen py-16">
       <div className="container mx-auto px-6 max-w-5xl space-y-12">
         <div className="section-title">
-          <h1 className="text-4xl font-bold text-black mb-4">À propos de Chambre à Nesle</h1>
-          <p>Une maison familiale repensée pour accueillir voyageurs, couples et amis en quête de sérénité.</p>
+          <h1 className="text-4xl font-bold text-black mb-4">À propos de ChambreANesle</h1>
+          <p>
+            Une maison familiale repensée pour accueillir voyageurs, couples et amis en quête de sérénité au cœur de la Somme,
+            à Nesle.
+          </p>
           <div className="w-20 h-1 bg-white mx-auto mt-4" />
         </div>
 

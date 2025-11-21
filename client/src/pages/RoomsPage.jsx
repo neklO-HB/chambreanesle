@@ -31,6 +31,15 @@ export default function RoomsPage() {
             ))}
           </div>
         )}
+        <div className="text-center mt-10">
+          <a
+            className="cta-button inline-flex items-center gap-2 bg-black text-white px-6 py-3 rounded-full font-semibold"
+            href="/reserver"
+          >
+            Réserver l'une de nos chambres
+            <i className="fas fa-arrow-right" aria-hidden />
+          </a>
+        </div>
       </div>
     </div>
   );
