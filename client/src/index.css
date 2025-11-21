@@ -1,0 +1,240 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Manrope', sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #000000;
+  background-color: #c45824;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #c45824;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: #c45824;
+  color: #000000;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Playfair Display', serif;
+  margin: 0;
+}
+
+.nav-link {
+  position: relative;
+  padding-bottom: 6px;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #2b2b2b;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #000000, #c45824);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.active-nav-link::after {
+  width: 100%;
+}
+
+.cta-button {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+}
+
+.animate-slide-down {
+  animation: slideDown 0.25s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.hero-bg {
+  background-color: #c45824;
+  color: #000000;
+}
+
+.room-card,
+.testimonial-card {
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.room-card:hover,
+.testimonial-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.feature-icon {
+  transition: all 0.3s ease;
+}
+
+.gradient-text {
+  background: linear-gradient(to right, #c45824, #e37a3d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-title h2 {
+  font-size: clamp(2rem, 4vw, 2.6rem);
+  color: #000000;
+}
+
+.section-title p {
+  max-width: 640px;
+  margin: 0 auto;
+  color: #000000;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.button-shadow {
+  box-shadow: 0 10px 20px rgba(196, 88, 36, 0.25);
+}
+
+.calendar-day {
+  transition: all 0.2s ease;
+}
+
+.calendar-day.available:hover {
+  background-color: #c45824;
+  color: white;
+}
+
+footer a {
+  color: #9ca3af;
+}
+
+footer a:hover {
+  color: white;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  background: #f3f4f6;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+main {
+  min-height: 100vh;
+  background-color: #c45824;
+}
+
+.section-surface {
+  background-color: #c45824;
+  color: #000000;
+}
+
+.content-card {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.slider-shell {
+  background: radial-gradient(circle at 20% 20%, rgba(196, 88, 36, 0.18), transparent 45%),
+    radial-gradient(circle at 80% 0%, rgba(0, 0, 0, 0.08), transparent 35%), #c45824;
+}
+
+.slider-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.12);
+  transition: transform 0.4s ease;
+}
+
+.slider-card:hover {
+  transform: translateY(-4px);
+}
+
+.slider-controls button {
+  transition: all 0.2s ease;
+}
+
+.slider-controls button:hover {
+  transform: translateY(-1px);
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}

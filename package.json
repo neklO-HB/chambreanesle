@@ -1,0 +1,43 @@
+{
+  "name": "chambreanesle",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "npm run start:server",
+    "dev": "npm run dev:client",
+    "client": "npm run dev:client",
+    "build": "npm run build:client",
+    "preview": "npm run preview:client",
+    "server": "npm run start:server",
+    "dev:client": "vite --config client/vite.config.js client",
+    "build:client": "vite build --config client/vite.config.js client",
+    "preview:client": "vite preview --config client/vite.config.js --host client",
+    "lint:client": "eslint client/src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "start:server": "node server/src/index.js",
+    "dev:server": "nodemon server/src/index.js",
+    "initdb": "node server/src/initdb.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.9.6",
+    "sqlite3": "^5.1.7",
+    "@vitejs/plugin-react": "^4.0.1",
+    "vite": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.14",
+    "@types/react-dom": "^18.2.6",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.44.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.1",
+    "nodemon": "^3.0.3",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.11"
+  }
+}
