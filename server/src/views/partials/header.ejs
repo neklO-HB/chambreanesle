@@ -13,19 +13,116 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
+    <% const roomsMenu = navRooms || []; %>
+    <% const path = currentPath || ''; %>
     <header class="site-header">
       <div class="container header-grid">
-        <div class="logo">
-          <a href="/">Chambre<br /><span>Anesle</span></a>
-        </div>
-        <nav class="nav">
-          <a href="/">Accueil</a>
-          <a href="/chambres">Chambres</a>
-          <a href="/a-propos">À propos</a>
-          <a href="/contact">Contact</a>
-          <a href="/espace-membre" class="button ghost">Espace membre</a>
-          <a href="/reservation" class="button">Réserver</a>
+        <a href="/" class="brand">
+          <span class="brand-logo">
+            <img src="/logo.svg" alt="Logo Chambre Anesle" />
+          </span>
+          <span class="brand-text">
+            <span class="brand-name">Chambre</span>
+            <span class="brand-highlight">Anesle</span>
+            <span class="brand-subtitle">Maison d'hôtes</span>
+          </span>
+        </a>
+
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
+          <span class="sr-only">Ouvrir le menu</span>
+          <span class="menu-icon" aria-hidden="true"></span>
+        </button>
+
+        <nav class="nav desktop-nav">
+          <a class="nav-link <%= path === '/' ? 'active' : '' %>" href="/">Accueil</a>
+
+          <div class="dropdown">
+            <button class="nav-link dropdown-trigger" type="button">
+              Nos chambres
+              <span class="chevron" aria-hidden="true">▾</span>
+            </button>
+            <div class="dropdown-menu">
+              <p class="dropdown-title">Choisissez votre chambre</p>
+              <div class="dropdown-grid">
+                <% if (!roomsMenu.length) { %>
+                <span class="dropdown-empty">Chambres en cours de préparation</span>
+                <% } %>
+
+                <% roomsMenu.forEach((room) => { %>
+                <a class="dropdown-item" href="/chambres/<%= room.slug %>">
+                  <span><%= room.name %></span>
+                  <% if (formatPrice) { %>
+                  <span class="dropdown-price"><%= formatPrice(room.price) %> / nuit</span>
+                  <% } %>
+                </a>
+                <% }) %>
+              </div>
+              <div class="dropdown-actions">
+                <a class="button ghost" href="/chambres">Toutes les chambres</a>
+              </div>
+            </div>
+          </div>
+
+          <a class="nav-link <%= path.startsWith('/a-propos') ? 'active' : '' %>" href="/a-propos">À propos</a>
+          <a class="nav-link <%= path.startsWith('/contact') ? 'active' : '' %>" href="/contact">Contact</a>
+          <a class="nav-link nav-ghost" href="/espace-membre">Espace membre</a>
+          <a class="nav-link nav-primary" href="/reservation">Réserver</a>
         </nav>
       </div>
+
+      <nav class="nav mobile-nav" id="mobile-nav" data-mobile-nav hidden>
+        <a class="nav-link <%= path === '/' ? 'active' : '' %>" href="/">Accueil</a>
+        <div class="mobile-section">
+          <p class="mobile-section-title">Nos chambres</p>
+          <div class="mobile-room-grid">
+            <% if (!roomsMenu.length) { %>
+            <span class="dropdown-empty">Chambres en cours de préparation</span>
+            <% } %>
+
+            <% roomsMenu.forEach((room) => { %>
+            <a class="dropdown-item" href="/chambres/<%= room.slug %>">
+              <span><%= room.name %></span>
+              <% if (formatPrice) { %>
+              <span class="dropdown-price"><%= formatPrice(room.price) %> / nuit</span>
+              <% } %>
+            </a>
+            <% }) %>
+          </div>
+          <a class="button ghost" href="/chambres">Toutes les chambres</a>
+        </div>
+        <a class="nav-link <%= path.startsWith('/a-propos') ? 'active' : '' %>" href="/a-propos">À propos</a>
+        <a class="nav-link <%= path.startsWith('/contact') ? 'active' : '' %>" href="/contact">Contact</a>
+        <a class="nav-link nav-ghost" href="/espace-membre">Espace membre</a>
+        <a class="nav-link nav-primary" href="/reservation">Réserver</a>
+      </nav>
     </header>
+
+    <script>
+      (() => {
+        const toggle = document.querySelector('[data-menu-toggle]');
+        const mobileNav = document.querySelector('[data-mobile-nav]');
+
+        if (!toggle || !mobileNav) return;
+
+        const links = mobileNav.querySelectorAll('a');
+
+        const closeMenu = () => {
+          mobileNav.classList.remove('open');
+          mobileNav.hidden = true;
+          toggle.setAttribute('aria-expanded', 'false');
+        };
+
+        toggle.addEventListener('click', () => {
+          const isOpen = !mobileNav.classList.contains('open');
+          mobileNav.classList.toggle('open', isOpen);
+          mobileNav.hidden = !isOpen;
+          toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        links.forEach((link) => {
+          link.addEventListener('click', closeMenu);
+        });
+      })();
+    </script>
+
     <main class="page">

@@ -108,6 +108,18 @@ const fetchRoomBySlug = async (slug) => {
   return row ? mapRoom(row) : null;
 };
 
+app.use(async (req, res, next) => {
+  try {
+    res.locals.navRooms = await fetchRooms();
+  } catch (error) {
+    console.error('Impossible de charger les chambres pour le menu.', error);
+    res.locals.navRooms = [];
+  }
+
+  res.locals.currentPath = req.path;
+  next();
+});
+
 const fetchBookingsWithRooms = async () => {
   const rows = await queryAll(
     `SELECT bookings.*, rooms.name, rooms.slug
