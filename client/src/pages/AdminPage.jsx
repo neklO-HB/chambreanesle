@@ -58,24 +58,6 @@ export default function AdminPage() {
   const [newMember, setNewMember] = useState({ name: '', email: '', password: '', company: '', role: 'client' });
   const [sectionList, setSectionList] = useState(getSections());
 
-  useEffect(() => {
-    const current = getCurrentUser();
-    if (current) {
-      setUser(current);
-      setProfileForm({
-        name: current.name || '',
-        email: current.email || '',
-        company: current.company || '',
-        password: ''
-      });
-      refreshMembers();
-      refreshBookings(current);
-      setStripeConfig(getStripeSettings());
-      setGalleries(getAllGalleriesSnapshot());
-      setSectionList(getSections());
-    }
-  }, [refreshBookings]);
-
   const refreshMembers = () => {
     setMembers(getUsers());
   };
@@ -97,6 +79,24 @@ export default function AdminPage() {
     },
     [user]
   );
+
+  useEffect(() => {
+    const current = getCurrentUser();
+    if (current) {
+      setUser(current);
+      setProfileForm({
+        name: current.name || '',
+        email: current.email || '',
+        company: current.company || '',
+        password: ''
+      });
+      refreshMembers();
+      refreshBookings(current);
+      setStripeConfig(getStripeSettings());
+      setGalleries(getAllGalleriesSnapshot());
+      setSectionList(getSections());
+    }
+  }, [refreshBookings]);
 
   const handleAuthError = (err) => {
     setError(err.message || 'Une erreur est survenue.');
