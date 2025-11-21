@@ -1,7 +1,7 @@
 import { Link, NavLink } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 const LOGO_URL = 'https://i.postimg.cc/25L3kxTM/logo-2.webp';
-import { rooms } from '../services/api';
+import { getRoomSnapshot, getRooms } from '../services/api';
 
 const navLinks = [
   { label: 'Accueil', to: '/' },
@@ -10,6 +10,11 @@ const navLinks = [
 
 export default function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [rooms, setRooms] = useState(getRoomSnapshot());
+
+  useEffect(() => {
+    getRooms().then(setRooms).catch(() => setRooms(getRoomSnapshot()));
+  }, []);
 
   const closeMenu = () => {
     setMenuOpen(false);
@@ -36,6 +41,7 @@ export default function NavBar() {
         <div className="hidden md:flex space-x-6 items-center">
           <NavLink
             to={navLinks[0].to}
+            end
             onClick={closeMenu}
             className={({ isActive }) =>
               `nav-link text-black font-semibold tracking-wide hover:text-[#2B2B2B] ${
@@ -92,7 +98,8 @@ export default function NavBar() {
           </NavLink>
           <NavLink
             to="/espace-membre"
-            className="cta-button bg-primary text-white px-4 py-2 rounded-full font-semibold shadow-lg hover:bg-secondary"
+            className="cta-button text-white px-4 py-2 rounded-full font-semibold shadow-lg"
+            style={{ backgroundColor: '#914119', borderBottom: '2px solid #6B2F10' }}
           >
             Espace membre
           </NavLink>
@@ -104,6 +111,7 @@ export default function NavBar() {
           <div className="flex flex-col space-y-3">
             <NavLink
               to={navLinks[0].to}
+              end
               onClick={closeMenu}
               className={({ isActive }) =>
                 `nav-link text-black font-semibold py-2 px-3 rounded-lg hover:text-[#2B2B2B] ${
@@ -156,7 +164,8 @@ export default function NavBar() {
             <NavLink
               to="/espace-membre"
               onClick={closeMenu}
-              className="cta-button w-full text-center bg-primary text-white px-4 py-2 rounded-full font-semibold shadow-lg hover:bg-secondary"
+              className="cta-button w-full text-center text-white px-4 py-2 rounded-full font-semibold shadow-lg"
+              style={{ backgroundColor: '#914119', borderBottom: '2px solid #6B2F10' }}
             >
               Espace membre
             </NavLink>

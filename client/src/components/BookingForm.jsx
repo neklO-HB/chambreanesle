@@ -4,19 +4,11 @@ import {
   createBooking,
   getBookings,
   getContactDetails,
+  getExtrasForForm,
   getStripeSettings
 } from '../services/api';
 import BookingCalendar from './BookingCalendar';
-
-const defaultExtras = {
-  breakfast: false,
-  spa: false
-};
-
-const extrasList = [
-  { key: 'breakfast', label: 'Petit déjeuner (20€/personne)', price: 20 },
-  { key: 'spa', label: 'Accès spa (35€/personne)', price: 35 }
-];
+import { formatDisplayRange } from '../utils/date';
 
 const formatCurrency = (value) => `${value.toFixed(2)}€`;
 
@@ -25,7 +17,8 @@ export default function BookingForm({ rooms }) {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [guests, setGuests] = useState(2);
-  const [extras, setExtras] = useState(defaultExtras);
+  const [extras, setExtras] = useState({});
+  const [availableExtras, setAvailableExtras] = useState(() => getExtrasForForm());
   const [bookings, setBookings] = useState([]);
   const [status, setStatus] = useState({ type: 'idle', message: '' });
   const [activeBooking, setActiveBooking] = useState(null);
@@ -37,6 +30,23 @@ export default function BookingForm({ rooms }) {
       .then(setBookings)
       .catch(() => setBookings([]));
   }, []);
+
+  useEffect(() => {
+    const refreshExtras = () => setAvailableExtras(getExtrasForForm());
+    refreshExtras();
+    window.addEventListener('storage', refreshExtras);
+    return () => window.removeEventListener('storage', refreshExtras);
+  }, []);
+
+  useEffect(() => {
+    setExtras((prev) => {
+      const next = {};
+      availableExtras.forEach((extra) => {
+        next[extra.id] = prev[extra.id] || false;
+      });
+      return next;
+    });
+  }, [availableExtras]);
 
   useEffect(() => {
     if (!roomSlug && rooms[0]?.slug) {
@@ -57,9 +67,9 @@ export default function BookingForm({ rooms }) {
   }, [startDate, endDate]);
 
   const extrasCost = useMemo(() => {
-    const count = extrasList.reduce((sum, extra) => (extras[extra.key] ? sum + extra.price : sum), 0);
+    const count = availableExtras.reduce((sum, extra) => (extras[extra.id] ? sum + Number(extra.price || 0) : sum), 0);
     return count * guests;
-  }, [extras, guests]);
+  }, [availableExtras, extras, guests]);
 
   const total = useMemo(() => {
     if (!selectedRoom || !nights) return null;
@@ -92,7 +102,7 @@ export default function BookingForm({ rooms }) {
     setStatus({ type: 'loading', message: '' });
 
     try {
-      const selectedExtras = extrasList.filter((extra) => extras[extra.key]).map((extra) => extra.label);
+      const selectedExtras = availableExtras.filter((extra) => extras[extra.id]).map((extra) => extra.label);
       const newBooking = await createBooking({
         roomSlug,
         startDate,
@@ -196,17 +206,18 @@ export default function BookingForm({ rooms }) {
               <div>
                 <p className="text-sm font-semibold text-black">Services supplémentaires</p>
                 <div className="space-y-2 mt-2">
-                  {extrasList.map((extra) => (
-                    <label key={extra.key} className="flex items-center">
+                  {availableExtras.map((extra) => (
+                    <label key={extra.id} className="flex items-center">
                       <input
                         type="checkbox"
-                        checked={extras[extra.key]}
-                        onChange={() => toggleExtra(extra.key)}
+                        checked={extras[extra.id]}
+                        onChange={() => toggleExtra(extra.id)}
                         className="h-4 w-4 text-primary focus:ring-primary"
                       />
                       <span className="ml-2 text-black">{extra.label}</span>
                     </label>
                   ))}
+                  {!availableExtras.length && <p className="text-sm text-black/70">Aucun service additionnel configuré.</p>}
                 </div>
               </div>
             </div>
@@ -274,9 +285,7 @@ export default function BookingForm({ rooms }) {
               </div>
               <div className="flex justify-between text-sm text-black/80">
                 <span>Dates</span>
-                <span>
-                  {startDate || 'Arrivée'} → {endDate || 'Départ'}
-                </span>
+                <span>{formatDisplayRange(startDate, endDate) || 'À définir'}</span>
               </div>
               <div className="flex justify-between text-sm text-black/80">
                 <span>Voyageurs</span>
@@ -285,8 +294,8 @@ export default function BookingForm({ rooms }) {
               <div className="flex justify-between text-sm text-black/80">
                 <span>Services</span>
                 <span>
-                  {extrasList
-                    .filter((extra) => extras[extra.key])
+                  {availableExtras
+                    .filter((extra) => extras[extra.id])
                     .map((extra) => extra.label)
                     .join(', ') || 'Aucun'}
                 </span>
@@ -323,7 +332,7 @@ export default function BookingForm({ rooms }) {
               <p className="text-sm uppercase tracking-wide text-green-600 mb-1">Réservation créée</p>
               <p className="font-bold text-black">N° {activeBooking.reservationNumber}</p>
               <p className="text-sm text-black/70">
-                Chambre {activeBooking.roomName} · {activeBooking.startDate} → {activeBooking.endDate}
+                Chambre {activeBooking.roomName} · {formatDisplayRange(activeBooking.startDate, activeBooking.endDate)}
               </p>
               <p className="text-xs text-black/60 mt-2">
                 Confirmation envoyée à {contactDetails.notificationEmails.join(', ')}.

@@ -19,13 +19,14 @@
     "initdb": "node server/src/initdb.js"
   },
   "dependencies": {
+    "@vitejs/plugin-react": "^4.0.1",
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "jspdf": "^3.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.9.6",
     "sqlite3": "^5.1.7",
-    "@vitejs/plugin-react": "^4.0.1",
     "vite": "^4.4.0"
   },
   "devDependencies": {
