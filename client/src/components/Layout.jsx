@@ -4,7 +4,7 @@ import NavBar from './NavBar';
 
 export default function Layout() {
   return (
-    <div className="min-h-screen flex flex-col bg-light">
+    <div className="min-h-screen flex flex-col bg-primary text-black">
       <NavBar />
       <main className="flex-1">
         <Outlet />

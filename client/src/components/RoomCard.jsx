@@ -8,10 +8,10 @@ export default function RoomCard({ room }) {
       </div>
       <div className="p-6 space-y-4">
         <div className="flex justify-between items-start">
-          <h3 className="text-2xl font-bold text-dark">{room.name}</h3>
-          <span className="bg-primary text-white px-3 py-1 rounded-full text-sm">À partir de {room.price}€/nuit</span>
+          <h3 className="text-2xl font-bold text-black">{room.name}</h3>
+          <span className="bg-primary text-black px-3 py-1 rounded-full text-sm">À partir de {room.price}€/nuit</span>
         </div>
-        <p className="text-gray-600">{room.description}</p>
+        <p className="text-black">{room.description}</p>
         <div className="tag-list">
           {room.features?.map((feature) => (
             <span key={feature} className="tag">
@@ -21,7 +21,7 @@ export default function RoomCard({ room }) {
         </div>
         <Link
           to={`/chambres/${room.slug}`}
-          className="inline-flex w-full justify-center bg-primary hover:bg-secondary text-white py-3 rounded-lg transition duration-300"
+          className="inline-flex w-full justify-center bg-primary hover:bg-secondary text-black py-3 rounded-lg transition duration-300"
         >
           Voir les détails
         </Link>
