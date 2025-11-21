@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getRoom } from '../services/api';
+import { getRoomGallery } from '../services/gallery';
 
 export default function RoomPage() {
   const { slug } = useParams();
   const [room, setRoom] = useState(null);
   const [error, setError] = useState('');
+  const [gallery, setGallery] = useState([]);
 
   useEffect(() => {
     getRoom(slug)
       .then(setRoom)
       .catch((err) => setError(err.message || 'Chambre introuvable.'));
+    setGallery(getRoomGallery(slug));
   }, [slug]);
 
   if (error) {
@@ -74,6 +77,19 @@ export default function RoomPage() {
               ))}
             </div>
           </div>
+          {!!gallery.length && (
+            <div className="bg-white rounded-xl p-6">
+              <h3 className="text-xl font-bold text-black mb-4">Photos additionnelles</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {gallery.map((photo) => (
+                  <figure key={photo.id} className="rounded-xl overflow-hidden shadow">
+                    <img src={photo.src} alt={photo.caption || room.name} className="w-full h-48 object-cover" />
+                    {photo.caption && <figcaption className="p-2 text-sm text-black/80">{photo.caption}</figcaption>}
+                  </figure>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="space-y-6">
@@ -90,11 +106,11 @@ export default function RoomPage() {
               </li>
               <li className="flex justify-between">
                 <span>Arrivée</span>
-                <span>15h00 - 21h00</span>
+                <span>À partir de 17h30</span>
               </li>
               <li className="flex justify-between">
                 <span>Départ</span>
-                <span>Avant 11h00</span>
+                <span>Avant 11h30</span>
               </li>
             </ul>
             <Link
@@ -108,12 +124,10 @@ export default function RoomPage() {
           <div className="bg-white rounded-xl p-6">
             <h4 className="font-bold text-black mb-3">Une question ?</h4>
             <p className="text-black mb-3">Contactez-nous pour préparer votre arrivée.</p>
-            <a className="block text-black font-semibold" href="mailto:contact@chambre-nesle.fr">
-              contact@chambre-nesle.fr
+            <a className="block text-black font-semibold" href="mailto:dupuisbrian80@outlook.fr">
+              dupuisbrian80@outlook.fr
             </a>
-            <a className="block text-black font-semibold" href="tel:+33123456789">
-              +33 1 23 45 67 89
-            </a>
+            <a className="block text-black font-semibold" href="tel:0648939733">0648939733</a>
           </div>
         </div>
       </div>

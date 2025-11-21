@@ -42,8 +42,8 @@ export default function Footer() {
 
           <div>
             <h4 className="text-lg font-bold mb-6">Contact & newsletter</h4>
-            <p className="text-black mb-2">contact@chambreanesle.fr</p>
-            <p className="text-black mb-4">+33 6 12 34 56 78</p>
+            <p className="text-black mb-2">chambreanesle@gmail.com</p>
+            <p className="text-black mb-4">0648939733</p>
             <form className="flex">
               <input
                 type="email"

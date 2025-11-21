@@ -47,8 +47,8 @@ export function getMembers() {
     {
       id: crypto.randomUUID(),
       name: 'Hôte premium',
-      email: 'client@chambreanesle.fr',
-      phone: '+33 6 12 34 56 78',
+      email: 'chambreanesle@gmail.com',
+      phone: '0648939733',
       role: 'Voyageur',
       createdAt: new Date().toISOString()
     }

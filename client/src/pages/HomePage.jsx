@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import BookingForm from '../components/BookingForm';
 import RoomCard from '../components/RoomCard';
 import { getRooms } from '../services/api';
 import HeroSlider from '../components/HeroSlider';
@@ -113,10 +112,21 @@ export default function HomePage() {
         <div className="container mx-auto px-6">
           <div className="section-title">
             <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">Réservez votre séjour</h2>
-            <p>{bookingIntro?.content || 'Consultez la disponibilité et réservez en ligne en toute simplicité.'}</p>
+            <p>
+              {bookingIntro?.content ||
+                'Choisissez vos dates en un clic et accédez au planning complet sur la page réservation.'}
+            </p>
             <div className="w-20 h-1 bg-primary mx-auto mt-4" />
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
+              <a
+                href="/reserver"
+                className="cta-button bg-black text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-[#2B2B2B]"
+              >
+                Accéder aux disponibilités
+              </a>
+              <p className="text-sm text-black/70">Arrivées dès 17h30 · Départs jusqu'à 11h30</p>
+            </div>
           </div>
-          <BookingForm rooms={rooms} />
         </div>
       </section>
 
